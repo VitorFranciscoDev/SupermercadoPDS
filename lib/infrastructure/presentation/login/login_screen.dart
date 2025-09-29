@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:supermercado/entities/enum_tipo.dart';
+import 'package:supermercado/entities/enum_tipo_usuario.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
 import 'package:supermercado/infrastructure/presentation/home_admin/home_admin_screen.dart';
-import 'package:supermercado/infrastructure/presentation/home_user/home_user_screen.dart';
+import 'package:supermercado/infrastructure/presentation/home_usuario/home_user_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,7 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController controllerNome = TextEditingController();
   TextEditingController controllerCPF = TextEditingController();
 
-  Tipo tipoUsuario = Tipo.usuario;
+  TipoUsuario tipoUsuario = TipoUsuario.usuario;
 
   String? erroNome;
   String? erroCPF;
@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     if(erroNome==null && erroCPF==null) {
-      if(tipoUsuario==Tipo.usuario) {
+      if(tipoUsuario==TipoUsuario.usuario) {
         Navigator.push(context, MaterialPageRoute(builder: (context) => HomeUserScreen()));
       } else {
         Navigator.push(context, MaterialPageRoute(builder: (context) => HomeAdminScreen()));
@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ListTile(
                             title: const Text("Usuário"),
                             leading: Radio(
-                              value: Tipo.usuario,
+                              value: TipoUsuario.usuario,
                               groupValue: tipoUsuario,
                               onChanged: (novoTipo) {
                                 setState(() {
@@ -111,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ListTile(
                             title: const Text("Admin"),
                             leading: Radio(
-                              value: Tipo.admin,
+                              value: TipoUsuario.admin,
                               groupValue: tipoUsuario,
                               onChanged: (novoTipo) {
                                 setState(() {

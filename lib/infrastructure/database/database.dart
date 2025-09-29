@@ -22,6 +22,7 @@ class DBHelper {
       path,
       version: 1,
       onCreate: (db, version) {
+        //UsuarioTable.createUsuarioTable(db);
         ProdutoTable.createProdutoTable(db);
       },
     );
