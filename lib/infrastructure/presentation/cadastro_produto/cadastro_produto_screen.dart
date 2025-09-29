@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
 
 class CadastroProdutoScreen extends StatefulWidget {
@@ -44,7 +45,9 @@ class _CadastroProdutoScreenState extends State<CadastroProdutoScreen> {
       }
     });
 
-    //if(erroNome)
+    if(erroNome==null && erroPreco==null && erroQuantidade==null) {
+
+    }
   }
 
   @override
@@ -73,17 +76,24 @@ class _CadastroProdutoScreenState extends State<CadastroProdutoScreen> {
             Padding(
               padding: EdgeInsets.only(top: 20, right: 40, left: 40),
               child: TextFieldComponent(
-                controller: controllerNome,
-                hint: "Nome do Produto",
-                erro: erroNome,
+                controller: controllerPreco,
+                hint: "Preço do Produto",
+                erro: erroPreco,
               ),
             ),
             Padding(
               padding: EdgeInsets.only(top: 20, right: 40, left: 40),
               child: TextFieldComponent(
-                controller: controllerNome,
-                hint: "Nome do Produto",
-                erro: erroNome,
+                controller: controllerQuantidade,
+                hint: "Quantidade em Estoque",
+                erro: erroQuantidade,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 30, right: 40, left: 40),
+              child: ButtonComponent(
+                metodo: cadastrarProduto, 
+                mensagem: "Cadastrar",
               ),
             ),
           ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
 import 'package:supermercado/infrastructure/presentation/home_admin/home_admin_screen.dart';
 import 'package:supermercado/infrastructure/presentation/home_user/home_user_screen.dart';
@@ -128,24 +129,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 20, left: 40, right: 40),
-                      child: ElevatedButton(
-                        onPressed: () => cadastrar(),
-                        child: const Text("Entrar", 
-                          style: TextStyle(
-                            color: Colors.black,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(double.infinity, 60),
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadiusGeometry.circular(20),
-                            side: BorderSide(
-                              width: 2,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
+                      child: ButtonComponent(
+                        metodo: cadastrar,
+                        mensagem: "Entrar",
                       ),
                     ),
                     Padding(padding: EdgeInsets.only(bottom: 40)),

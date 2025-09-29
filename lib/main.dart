@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supermercado/infrastructure/presentation/login/login_screen.dart';
-import 'package:supermercado/infrastructure/presentation/login/login_state.dart';
+import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => LoginState()),
+        ChangeNotifierProvider(create: (_) => ProdutoProvider()),
       ],
       child: MyApp(),
     ),
