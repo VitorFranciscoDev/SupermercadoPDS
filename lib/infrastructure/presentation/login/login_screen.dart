@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
 import 'package:supermercado/infrastructure/presentation/home_admin/home_admin_screen.dart';
 import 'package:supermercado/infrastructure/presentation/home_user/home_user_screen.dart';
 
@@ -80,78 +81,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Padding(
                       padding: EdgeInsets.only(top: 40, right: 40, left: 40),
-                      child: TextField(
+                      child: TextFieldComponent(
                         controller: controllerNome,
-                        decoration: InputDecoration(
-                          hintText: "Nome",
-                          errorText: erroNome,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: Colors.black,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: Colors.black,
-                            ),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: Colors.black,
-                            ),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
+                        hint: "Nome",
+                        erro: erroNome,
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 20, right: 40, left: 40),
-                      child: TextField(
+                      child: TextFieldComponent(
                         controller: controllerCPF,
-                        decoration: InputDecoration(
-                          hintText: "CPF",
-                          errorText: erroCPF,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: Colors.black,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: Colors.black,
-                            ),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: Colors.black,
-                            ),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
+                        hint: "CPF",
+                        erro: erroCPF,
                       ),
                     ),
                     Padding(
