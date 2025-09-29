@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:supermercado/entities/produto.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
+import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
 
 class CadastroProdutoScreen extends StatefulWidget {
   const CadastroProdutoScreen({super.key});
@@ -46,7 +49,21 @@ class _CadastroProdutoScreenState extends State<CadastroProdutoScreen> {
     });
 
     if(erroNome==null && erroPreco==null && erroQuantidade==null) {
-
+      Produto produto = new Produto(nome: controllerNome.text, preco: double.parse(controllerPreco.text), quantidade: int.parse(controllerQuantidade.text));
+      context.read<ProdutoProvider>().addProduto(produto);
+      showDialog(
+        context: context, builder: (context) {
+          return AlertDialog(
+            title: const Text("Produto Cadastrado"),
+            actions: [
+              TextButton(
+                onPressed: Navigator.of(context).pop, 
+                child: const Text("Fechar"),
+              ),
+            ],
+          );
+        }
+      );
     }
   }
 

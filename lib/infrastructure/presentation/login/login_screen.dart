@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supermercado/entities/enum_tipo.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
 import 'package:supermercado/infrastructure/presentation/home_admin/home_admin_screen.dart';
@@ -9,11 +10,6 @@ class LoginScreen extends StatefulWidget {
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
-}
-
-enum Tipo {
-  usuario,
-  admin,
 }
 
 class _LoginScreenState extends State<LoginScreen> {

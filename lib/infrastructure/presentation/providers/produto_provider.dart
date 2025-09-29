@@ -8,4 +8,9 @@ class ProdutoProvider with ChangeNotifier {
     produtos.add(produto);
     notifyListeners();
   }
+
+  void excluirProduto(Produto produto) {
+    produtos.remove(produto);
+    notifyListeners();
+  }
 }
