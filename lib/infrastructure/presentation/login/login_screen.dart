@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     if(erroNome==null && erroCPF==null) {
-      Usuario? usuario = await usuarioRepo.verificarLogin(controllerNome.text, int.parse(controllerCPF.text));
+      Usuario? usuario = await usuarioRepo.verificarLogin(controllerNome.text, controllerCPF.text);
       if(usuario!=null) {
         showDialog(
           context: context, 
@@ -123,6 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         controller: controllerCPF,
                         hint: "CPF",
                         erro: erroCPF,
+                        tipo: TextInputType.number,
                       ),
                     ),
                     Padding(

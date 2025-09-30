@@ -6,7 +6,7 @@ class UsuarioTable {
       CREATE TABLE usuarios(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome TEXT NOT NULL,
-        cpf INTEGER NOT NULL,
+        cpf TEXT NOT NULL UNIQUE,
         tipoUsuario INTEGER NOT NULL
       )
     ''');
