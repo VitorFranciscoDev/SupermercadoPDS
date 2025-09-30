@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:supermercado/entities/enum_tipo_usuario.dart';
+import 'package:supermercado/entities/usuario.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
-import 'package:supermercado/infrastructure/presentation/home_admin/home_admin_screen.dart';
-import 'package:supermercado/infrastructure/presentation/home_usuario/home_user_screen.dart';
 import 'package:supermercado/infrastructure/presentation/login/login_screen.dart';
+import 'package:supermercado/modules/usuario/usuario_repository.dart';
 
 class CadastroScreen extends StatefulWidget {
   const CadastroScreen({super.key});
@@ -22,7 +22,9 @@ class _CadastroScreenState extends State<CadastroScreen> {
   String? erroNome;
   String? erroCPF;
 
-  void cadastrar() {
+  final UsuarioRepository usuarioRepo = UsuarioRepository();
+
+  void cadastrar() async {
     setState(() {
       if(controllerNome.text.isEmpty) {
         erroNome = "Nome não pode estar em branco";
@@ -40,11 +42,24 @@ class _CadastroScreenState extends State<CadastroScreen> {
     });
 
     if(erroNome==null && erroCPF==null) {
-      if(tipoUsuario==TipoUsuario.usuario) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HomeUserScreen()));
-      } else {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HomeAdminScreen()));
-      }
+      Usuario usuario = Usuario(nome: controllerNome.text, cpf: int.parse(controllerCPF.text), tipo: tipoUsuario);
+      await usuarioRepo.registrarUsuario(usuario);
+      
+      showDialog(
+        context: context, 
+        builder: (context) => AlertDialog(
+          title: const Text("Usuário cadastrado!"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+              }, 
+              child: const Text("Fechar"),
+            ),
+          ],
+        ),
+      );
     }
   }
 

@@ -13,7 +13,7 @@ class Usuario {
       'id': id,
       'nome': nome,
       'cpf': cpf,
-      'tipo': tipo,
+      'tipo': tipo.index,
     };
   }
 
@@ -22,7 +22,7 @@ class Usuario {
       id: map['id'],
       nome: map['nome'],
       cpf: map['cpf'],
-      tipo: map['tipo'],
+      tipo: TipoUsuario.values[map['tipo']],
     );
   }
 }

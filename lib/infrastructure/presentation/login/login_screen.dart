@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:supermercado/entities/enum_tipo_usuario.dart';
+import 'package:supermercado/entities/usuario.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
 import 'package:supermercado/infrastructure/presentation/cadastro/cadastro_screen.dart';
+import 'package:supermercado/infrastructure/presentation/home_admin/home_admin_screen.dart';
+import 'package:supermercado/infrastructure/presentation/home_usuario/home_user_screen.dart';
+import 'package:supermercado/modules/usuario/usuario_repository.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,7 +22,9 @@ class _LoginScreenState extends State<LoginScreen> {
   String? erroNome;
   String? erroCPF;
 
-  void logar() {
+  final UsuarioRepository usuarioRepo = UsuarioRepository();
+
+  void logar() async {
     setState(() {
       if(controllerNome.text.isEmpty) {
         erroNome = "Nome não pode estar em branco";
@@ -35,7 +42,28 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     if(erroNome==null && erroCPF==null) {
-      
+      Usuario? usuario = await usuarioRepo.verificarLogin(controllerNome.text, int.parse(controllerCPF.text));
+      if(usuario!=null) {
+        showDialog(
+          context: context, 
+          builder: (context) => AlertDialog(
+            title: const Text("Login realizado com sucesso"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  if(usuario.tipo==TipoUsuario.usuario) {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomeUserScreen()));
+                  } else {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomeAdminScreen()));
+                  }
+                },
+                child: const Text("Fechar"),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 

@@ -1,12 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:supermercado/infrastructure/database/usuario_table.dart';
 import 'produto_table.dart';
 
-class DBHelper {
-  static final DBHelper instance = DBHelper._internal();
-  DBHelper._internal();
+class DatabaseProvider with ChangeNotifier {
+  static final DatabaseProvider instance = DatabaseProvider._internal();
+  factory DatabaseProvider() => instance;
+  DatabaseProvider._internal();
   static Database? db;
 
   Future<Database> get database async {

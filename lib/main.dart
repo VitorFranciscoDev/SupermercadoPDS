@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supermercado/infrastructure/database/database_provider.dart';
 import 'package:supermercado/infrastructure/presentation/login/login_screen.dart';
 import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
 import 'package:supermercado/infrastructure/presentation/providers/usuario_provider.dart';
@@ -10,6 +11,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => UsuarioProvider()),
         ChangeNotifierProvider(create: (_) => ProdutoProvider()),
+        ChangeNotifierProvider(create: (_) => DatabaseProvider()),
       ],
       child: MyApp(),
     ),
