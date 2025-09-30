@@ -7,7 +7,7 @@ class UsuarioTable {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome TEXT NOT NULL,
         cpf INTEGER NOT NULL,
-        tipoUsuario INTEGER NOT NULL,
+        tipoUsuario INTEGER NOT NULL
       )
     ''');
   }

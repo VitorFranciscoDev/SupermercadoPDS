@@ -63,6 +63,19 @@ class _LoginScreenState extends State<LoginScreen> {
             ],
           ),
         );
+      } else {
+        showDialog(
+          context: context, 
+          builder: (context) => AlertDialog(
+            title: const Text("Nome ou CPF inválidos"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("Fechar"),
+              ),
+            ],
+          ),
+        );
       }
     }
   }
