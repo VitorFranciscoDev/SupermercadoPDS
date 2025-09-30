@@ -1,23 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:supermercado/entities/enum_tipo_usuario.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
-import 'package:supermercado/infrastructure/presentation/cadastro/cadastro_screen.dart';
+import 'package:supermercado/infrastructure/presentation/home_admin/home_admin_screen.dart';
+import 'package:supermercado/infrastructure/presentation/home_usuario/home_user_screen.dart';
+import 'package:supermercado/infrastructure/presentation/login/login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class CadastroScreen extends StatefulWidget {
+  const CadastroScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<CadastroScreen> createState() => _CadastroScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _CadastroScreenState extends State<CadastroScreen> {
   TextEditingController controllerNome = TextEditingController();
   TextEditingController controllerCPF = TextEditingController();
+
+  TipoUsuario tipoUsuario = TipoUsuario.usuario;
 
   String? erroNome;
   String? erroCPF;
 
-  void logar() {
+  void cadastrar() {
     setState(() {
       if(controllerNome.text.isEmpty) {
         erroNome = "Nome não pode estar em branco";
@@ -35,7 +40,11 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     if(erroNome==null && erroCPF==null) {
-      
+      if(tipoUsuario==TipoUsuario.usuario) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => HomeUserScreen()));
+      } else {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => HomeAdminScreen()));
+      }
     }
   }
 
@@ -48,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             Padding(
               padding: EdgeInsets.only(top: 100),
-              child: const Text("Login", 
+              child: const Text("Cadastro", 
                 style: TextStyle(
                   fontSize: 30,
                   fontFamily: "Arial",
@@ -85,20 +94,51 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 20, left: 40, right: 40),
-                      child: ButtonComponent(
-                        metodo: logar,
-                        mensagem: "Entrar",
+                      padding: EdgeInsets.only(top: 20, right: 40, left: 40),
+                      child: Column( 
+                        children: [
+                          ListTile(
+                            title: const Text("Usuário"),
+                            leading: Radio(
+                              value: TipoUsuario.usuario,
+                              groupValue: tipoUsuario,
+                              onChanged: (novoTipo) {
+                                setState(() {
+                                  tipoUsuario = novoTipo!;
+                                });
+                              },
+                            ),
+                          ),
+                          ListTile(
+                            title: const Text("Admin"),
+                            leading: Radio(
+                              value: TipoUsuario.admin,
+                              groupValue: tipoUsuario,
+                              onChanged: (novoTipo) {
+                                setState(() {
+                                  tipoUsuario = novoTipo!;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 20, left: 30, right: 30),
+                      padding: EdgeInsets.only(top: 20, left: 40, right: 40),
+                      child: ButtonComponent(
+                        metodo: cadastrar,
+                        mensagem: "Cadastrar",
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 20, left: 40, right: 40),
                       child: Column(
                         children: [
-                          const Text("Ainda não tem uma conta?"),
+                          const Text("Já tem uma conta?"),
                           TextButton(
-                            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CadastroScreen())), 
-                            child: const Text("Clique aqui para ir ao Cadastro!")
+                            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen())), 
+                            child: const Text("Clique aqui para ir ao Login!")
                           ),
                         ],
                       ),

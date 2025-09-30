@@ -1,6 +1,7 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
+import 'package:supermercado/infrastructure/database/usuario_table.dart';
 import 'produto_table.dart';
 
 class DBHelper {
@@ -22,7 +23,7 @@ class DBHelper {
       path,
       version: 1,
       onCreate: (db, version) {
-        //UsuarioTable.createUsuarioTable(db);
+        UsuarioTable.createUsuarioTable(db);
         ProdutoTable.createProdutoTable(db);
       },
     );
