@@ -11,12 +11,14 @@ class DatabaseProvider with ChangeNotifier {
   DatabaseProvider._internal();
   static Database? db;
 
+  //Getter pro Database
   Future<Database> get database async {
     if(db!=null) return db!;
     db = await initDB();
     return db!;
   }
 
+  //Inicializa o banco e as tabelas
   Future<Database> initDB() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, "supermercado.db");
@@ -24,9 +26,9 @@ class DatabaseProvider with ChangeNotifier {
     return await openDatabase(
       path,
       version: 1,
-      onCreate: (db, version) {
-        UsuarioTable.createUsuarioTable(db);
-        ProdutoTable.createProdutoTable(db);
+      onCreate: (db, version) async {
+        await UsuarioTable.createUsuarioTable(db);
+        await ProdutoTable.createProdutoTable(db);
       },
     );
   }

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:supermercado/entities/enum_tipo_usuario.dart';
-import 'package:supermercado/entities/usuario.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
 import 'package:supermercado/infrastructure/presentation/cadastro/cadastro_screen.dart';
 import 'package:supermercado/infrastructure/presentation/home_admin/home_admin_screen.dart';
 import 'package:supermercado/infrastructure/presentation/home_usuario/home_user_screen.dart';
 import 'package:supermercado/modules/usuario/usuario_repository.dart';
+import 'package:supermercado/modules/usuario/usuario_usecase.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,34 +17,27 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  //Controllers dos TextFields
   TextEditingController controllerNome = TextEditingController();
   TextEditingController controllerCPF = TextEditingController();
 
+  //Variáveis de erro
   String? erroNome;
   String? erroCPF;
 
-  final UsuarioRepository usuarioRepo = UsuarioRepository();
+  //Casos de uso do usuário
+  final UsuarioUseCase usuarioUseCase = UsuarioUseCase(usuarioRepo: UsuarioRepository());
 
-  void logar() async {
+  void entrar() async {
     setState(() {
-      if(controllerNome.text.isEmpty) {
-        erroNome = "Nome não pode estar em branco";
-      } else {
-        erroNome = null;
-      }
-
-      if(controllerCPF.text.isEmpty) {
-        erroCPF = "CPF não pode estar em branco";
-      } else if(controllerCPF.text.length!=11) {
-        erroCPF = "CPF deve conter 11 dígitos";
-      } else {
-        erroCPF = null;
-      }
+      erroNome = usuarioUseCase.validarNome(controllerNome.text);
+      erroCPF = usuarioUseCase.validarCPF(controllerCPF.text);
     });
 
     if(erroNome==null && erroCPF==null) {
-      Usuario? usuario = await usuarioRepo.verificarLogin(controllerNome.text, controllerCPF.text);
-      if(usuario!=null) {
+      final resultado = await usuarioUseCase.fazerLogin(controllerNome.text, int.parse(controllerCPF.text));
+
+      if(resultado!=null) {
         showDialog(
           context: context, 
           builder: (context) => AlertDialog(
@@ -52,11 +46,9 @@ class _LoginScreenState extends State<LoginScreen> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  if(usuario.tipo==TipoUsuario.usuario) {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomeUserScreen()));
-                  } else {
+                  resultado.tipo==TipoUsuario.usuario ?
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomeUserScreen())) :
                     Navigator.push(context, MaterialPageRoute(builder: (context) => HomeAdminScreen()));
-                  }
                 },
                 child: const Text("Fechar"),
               ),
@@ -84,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           children: [
             Padding(
@@ -124,12 +116,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         hint: "CPF",
                         erro: erroCPF,
                         tipo: TextInputType.number,
+                        formatter: FilteringTextInputFormatter.digitsOnly,
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 20, left: 40, right: 40),
                       child: ButtonComponent(
-                        metodo: logar,
+                        metodo: entrar,
                         mensagem: "Entrar",
                       ),
                     ),

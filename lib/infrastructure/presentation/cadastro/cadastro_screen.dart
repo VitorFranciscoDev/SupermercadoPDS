@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:supermercado/entities/enum_tipo_usuario.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
@@ -26,19 +27,19 @@ class _CadastroScreenState extends State<CadastroScreen> {
   String? erroCPF;
 
   //Casos de Uso do Usuário
-  final UsuarioUseCase cadastroUseCase = UsuarioUseCase(usuarioRepo: UsuarioRepository());
+  final UsuarioUseCase usuarioUseCase = UsuarioUseCase(usuarioRepo: UsuarioRepository());
 
   //Função para cadastrar o usuário
   void cadastrar() async {
     //Variáveis de erro recebem a mensagem de erro
     setState(() {
-      erroNome = cadastroUseCase.validarNome(controllerNome.text);
-      erroCPF = cadastroUseCase.validarCPF(controllerCPF.text);
+      erroNome = usuarioUseCase.validarNome(controllerNome.text);
+      erroCPF = usuarioUseCase.validarCPF(controllerCPF.text);
     });
 
     //Se não houver mensagem de erro, tenta fazer o cadastro
     if(erroNome==null && erroCPF==null) {
-      final resultado = await cadastroUseCase.cadastrarUsuario(controllerNome.text, controllerCPF.text, tipoUsuario);
+      final resultado = await usuarioUseCase.cadastrarUsuario(controllerNome.text, int.parse(controllerCPF.text), tipoUsuario);
 
       if(resultado==null) {
         //Mensagem na tela
@@ -58,21 +59,9 @@ class _CadastroScreenState extends State<CadastroScreen> {
           ),
         );
       } else {
-        //Mensagem na tela
-        showDialog(
-          context: context, 
-          builder: (context) => AlertDialog(
-            title: Text(resultado),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                }, 
-                child: const Text("Fechar"),
-              ),
-            ],
-          ),
-        );
+        setState(() {
+          erroCPF = resultado;
+        });
       }
     }
   }
@@ -121,6 +110,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                           hint: "CPF",
                           erro: erroCPF,
                           tipo: TextInputType.number,
+                          formatter: FilteringTextInputFormatter.digitsOnly,
                         ),
                       ),
                       Padding(
