@@ -1,17 +1,20 @@
 import 'package:supermercado/entities/enum_tipo_usuario.dart';
 import 'package:supermercado/entities/usuario.dart';
 import 'package:supermercado/modules/usuario/usuario_repository.dart';
+import 'package:supermercado/modules/usuario/usuario_spec.dart';
 
-class UsuarioUseCase {
+class UsuarioUseCase implements IUsuarioUseCase {
   UsuarioUseCase({ required this.usuarioRepo });
 
   //Repositório do usuário
   final UsuarioRepository usuarioRepo;
 
   //Função para validar o nome
+  @override
   String? validarNome(String nome) => nome.isEmpty ? "Nome não pode estar vazio" : null;
 
   //Função para validar o CPF
+  @override
   String? validarCPF(String cpf) {
     if(cpf.isEmpty) {
       return "CPF não pode estar vazio";
@@ -23,7 +26,8 @@ class UsuarioUseCase {
   }
 
   //Função para cadastrar o usuário
-  Future<String?> cadastrarUsuario(String nome, int cpf, TipoUsuario tipo) async {
+  @override
+  Future<String?> cadastrarUsuario(String nome, String cpf, TipoUsuario tipo) async {
     //Verifica se o usuário já não existe
     final resultado = await usuarioRepo.procurarUsuarioPorCPF(cpf);
 
@@ -50,7 +54,8 @@ class UsuarioUseCase {
     }
   }
 
-  Future<Usuario?> fazerLogin(String nome, int cpf) async {
+  @override
+  Future<Usuario?> fazerLogin(String nome, String cpf) async {
     final result = await usuarioRepo.verificarLogin(nome, cpf);
 
     if(result!=null) {

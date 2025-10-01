@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:supermercado/entities/enum_tipo_usuario.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
 import 'package:supermercado/infrastructure/presentation/cadastro/cadastro_screen.dart';
 import 'package:supermercado/infrastructure/presentation/home_admin/home_admin_screen.dart';
 import 'package:supermercado/infrastructure/presentation/home_usuario/home_user_screen.dart';
+import 'package:supermercado/infrastructure/presentation/providers/usuario_provider.dart';
 import 'package:supermercado/modules/usuario/usuario_repository.dart';
 import 'package:supermercado/modules/usuario/usuario_usecase.dart';
 
@@ -35,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     if(erroNome==null && erroCPF==null) {
-      final resultado = await usuarioUseCase.fazerLogin(controllerNome.text, int.parse(controllerCPF.text));
+      final resultado = await usuarioUseCase.fazerLogin(controllerNome.text, controllerCPF.text);
 
       if(resultado!=null) {
         showDialog(
@@ -45,6 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
             actions: [
               TextButton(
                 onPressed: () {
+                  context.read<UsuarioProvider>().registrarUsuario(resultado);
                   Navigator.of(context).pop();
                   resultado.tipo==TipoUsuario.usuario ?
                     Navigator.push(context, MaterialPageRoute(builder: (context) => HomeUserScreen())) :

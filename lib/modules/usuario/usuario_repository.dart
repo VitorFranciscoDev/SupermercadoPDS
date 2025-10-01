@@ -7,7 +7,7 @@ class UsuarioRepository {
   final DatabaseProvider dbProvider = DatabaseProvider();
 
   //Função para buscar o usuário por CPF(Verificar se o usuário já existe)
-  Future<Usuario?> procurarUsuarioPorCPF(int cpf) async {
+  Future<Usuario?> procurarUsuarioPorCPF(String cpf) async {
     Database db = await dbProvider.database;
 
     //Busca o usuário por CPF
@@ -35,7 +35,7 @@ class UsuarioRepository {
   }
 
   //Função para verificar se o usuário existe e fazer o login
-  Future<Usuario?> verificarLogin(String nome, int cpf) async {
+  Future<Usuario?> verificarLogin(String nome, String cpf) async {
     Database db = await dbProvider.database;
 
     //Busca o usuário por CPF

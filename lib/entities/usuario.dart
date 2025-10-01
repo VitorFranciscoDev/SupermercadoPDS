@@ -4,7 +4,7 @@ class Usuario {
   //Variáveis
   final int? id;
   final String nome;
-  final int cpf;
+  final String cpf;
   final TipoUsuario tipo;
 
   //Construtor

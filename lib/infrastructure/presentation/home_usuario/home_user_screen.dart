@@ -23,41 +23,48 @@ class HomeUserScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: produtos.length,
-                itemBuilder: (context, index) {
-                  final produto = produtos[index];
-                  return Padding(
-                    padding: EdgeInsets.only(top: 30, right: 40, left: 40),
-                    child: Container(
-                      width: 300,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          width: 2,
-                          color: Colors.black,
+            produtos.isEmpty ?
+              Expanded(
+                child: ListView.builder(
+                  itemCount: produtos.length,
+                  itemBuilder: (context, index) {
+                    final produto = produtos[index];
+                    return Padding(
+                      padding: EdgeInsets.only(top: 30, right: 40, left: 40),
+                      child: Container(
+                        width: 300,
+                        height: 70,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            width: 2,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 10, right: 180),
-                            child: Text(produto.nome, 
-                              style: TextStyle(
-                                fontSize: 20
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 10, right: 180),
+                              child: Text(produto.nome, 
+                                style: TextStyle(
+                                  fontSize: 20
+                                ),
                               ),
                             ),
-                          ),
-                          Text(produto.preco.toString()),
-                        ],
+                            Text(produto.preco.toString()),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
+              )
+              : Padding(padding: EdgeInsets.only(top: 100)),
+              const Text("Sem produtos na lista", 
+                style: TextStyle(
+                  fontSize: 20,
+                ),
               ),
-            ),
           ],
         ),
       ),

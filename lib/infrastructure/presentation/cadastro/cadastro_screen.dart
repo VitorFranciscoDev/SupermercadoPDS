@@ -39,7 +39,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
 
     //Se não houver mensagem de erro, tenta fazer o cadastro
     if(erroNome==null && erroCPF==null) {
-      final resultado = await usuarioUseCase.cadastrarUsuario(controllerNome.text, int.parse(controllerCPF.text), tipoUsuario);
+      final resultado = await usuarioUseCase.cadastrarUsuario(controllerNome.text, controllerCPF.text, tipoUsuario);
 
       if(resultado==null) {
         //Mensagem na tela
