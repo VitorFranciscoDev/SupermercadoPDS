@@ -1,6 +1,6 @@
-/*
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supermercado/entities/produto.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
 import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
@@ -8,7 +8,8 @@ import 'package:supermercado/modules/produto/produto_repository.dart';
 import 'package:supermercado/modules/produto/produto_usecase.dart';
 
 class EditarProdutoAdminScreen extends StatefulWidget {
-  const EditarProdutoAdminScreen({super.key});
+  const EditarProdutoAdminScreen({ super.key, required this.produto });
+  final Produto produto;
 
   @override
   State<EditarProdutoAdminScreen> createState() => _EditarProdutoAdminScreenState();
@@ -28,6 +29,14 @@ class _EditarProdutoAdminScreenState extends State<EditarProdutoAdminScreen> {
   //Casos de uso da aplicação
   final ProdutoUseCase produtoUseCase = ProdutoUseCase(produtoRepo: ProdutoRepository());
 
+  @override
+  void initState() {
+    super.initState();
+    controllerNome.text = widget.produto.nome;
+    controllerPreco.text = widget.produto.preco.toString();
+    controllerQuantidade.text = widget.produto.quantidade.toString();
+  }
+
   void editarProduto() async {
     setState(() {
       erroNome = produtoUseCase.validarNome(controllerNome.text);
@@ -36,7 +45,7 @@ class _EditarProdutoAdminScreenState extends State<EditarProdutoAdminScreen> {
     });
 
     if(erroNome==null && erroPreco==null && erroQuantidade==null) {
-      final resultado = await produtoUseCase.editarProduto(controllerNome.text, double.parse(controllerPreco.text), int.parse(controllerQuantidade.text));
+      final resultado = await produtoUseCase.cadastrarProduto(controllerNome.text, double.parse(controllerPreco.text), int.parse(controllerQuantidade.text));
 
       if(resultado!=null) {
         context.read<ProdutoProvider>().addProduto(resultado);
@@ -80,7 +89,7 @@ class _EditarProdutoAdminScreenState extends State<EditarProdutoAdminScreen> {
           children: [
             Padding(
               padding: EdgeInsets.only(top: 100),
-              child: const Text("Cadastro de Produto",
+              child: const Text("Editar Produto",
                 style: TextStyle(
                   fontSize: 30,
                 ),
@@ -112,10 +121,10 @@ class _EditarProdutoAdminScreenState extends State<EditarProdutoAdminScreen> {
             ),
             Padding(
               padding: EdgeInsets.only(top: 30, right: 40, left: 40),
-              //child: ButtonComponent(
-                //metodo: cadastrarProduto, 
-                //mensagem: "Cadastrar",
-              //),
+              child: ButtonComponent(
+                metodo: editarProduto, 
+                mensagem: "Editar",
+              ),
             ),
           ],
         ),
@@ -123,4 +132,3 @@ class _EditarProdutoAdminScreenState extends State<EditarProdutoAdminScreen> {
     );
   }
 }
-*/

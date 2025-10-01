@@ -25,7 +25,7 @@ class Usuario {
     return Usuario(
       id: map['id'],
       nome: map['nome'],
-      cpf: map['cpf'],
+      cpf: map['cpf'].toString(),
       tipo: TipoUsuario.values[map['tipoUsuario']],
     );
   }
