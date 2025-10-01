@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
@@ -111,10 +112,10 @@ class _EditarProdutoAdminScreenState extends State<EditarProdutoAdminScreen> {
             ),
             Padding(
               padding: EdgeInsets.only(top: 30, right: 40, left: 40),
-              child: ButtonComponent(
-                metodo: cadastrarProduto, 
-                mensagem: "Cadastrar",
-              ),
+              //child: ButtonComponent(
+                //metodo: cadastrarProduto, 
+                //mensagem: "Cadastrar",
+              //),
             ),
           ],
         ),
@@ -122,3 +123,4 @@ class _EditarProdutoAdminScreenState extends State<EditarProdutoAdminScreen> {
     );
   }
 }
+*/

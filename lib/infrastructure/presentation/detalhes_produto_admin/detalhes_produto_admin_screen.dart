@@ -17,10 +17,6 @@ class _DetalhesProdutoAdminScreenState extends State<DetalhesProdutoAdminScreen>
       body: Center(
         child: Column(
           children: [
-            FloatingActionButton(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => EditarProdutoAdminScreen())),
-              child: Icon(Icons.edit),
-            ),
             Padding(
               padding: EdgeInsets.only(top: 150),
               child: Text(widget.produto.nome, 
@@ -48,6 +44,10 @@ class _DetalhesProdutoAdminScreenState extends State<DetalhesProdutoAdminScreen>
           ],
         ),
       ),
+      //floatingActionButton: FloatingActionButton(
+        //onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => EditarProdutoAdminScreen())),
+        //child: Icon(Icons.edit),
+      //),
     );
   }
 }

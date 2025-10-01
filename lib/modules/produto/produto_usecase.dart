@@ -37,7 +37,5 @@ class ProdutoUseCase implements IProdutoUseCase {
     }
   }
 
-  Future<Produto?> editarProduto(Produto produtoVelho, Produto produtoNovo) async {
-    
-  }
+
 }
