@@ -54,6 +54,7 @@ class UsuarioUseCase implements IUsuarioUseCase {
     }
   }
 
+  //Função para fazer Login
   @override
   Future<Usuario?> fazerLogin(String nome, String cpf) async {
     final result = await usuarioRepo.verificarLogin(nome, cpf);

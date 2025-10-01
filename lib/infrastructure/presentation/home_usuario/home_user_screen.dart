@@ -23,7 +23,7 @@ class HomeUserScreen extends StatelessWidget {
                 ),
               ),
             ),
-            produtos.isEmpty ?
+            produtos.isNotEmpty ?
               Expanded(
                 child: ListView.builder(
                   itemCount: produtos.length,
@@ -63,6 +63,12 @@ class HomeUserScreen extends StatelessWidget {
               const Text("Sem produtos na lista", 
                 style: TextStyle(
                   fontSize: 20,
+                ),
+              ),
+              Padding(padding: EdgeInsets.only(top: 3)),
+              const Text("Volte outra hora", 
+                style: TextStyle(
+                  fontSize: 18,
                 ),
               ),
           ],

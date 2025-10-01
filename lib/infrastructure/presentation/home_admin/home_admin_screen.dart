@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supermercado/infrastructure/presentation/cadastro_produto/cadastro_produto_screen.dart';
+import 'package:supermercado/infrastructure/presentation/cadastro_produto_admin/cadastro_produto_admin_screen.dart';
 import 'package:supermercado/infrastructure/presentation/lista_produtos_admin/lista_produtos_admin_screen.dart';
 
 class HomeAdminScreen extends StatelessWidget {
@@ -52,7 +52,7 @@ class HomeAdminScreen extends StatelessWidget {
                     borderRadius: BorderRadiusGeometry.circular(20),
                   ),
                 ),
-                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CadastroProdutoScreen())),
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CadastroProdutoAdminScreen())),
                 child: const Text("Adicionar Produto", style: TextStyle(color: Colors.black))
               ),
             ),

@@ -1,69 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:supermercado/entities/produto.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
 import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
+import 'package:supermercado/modules/produto/produto_repository.dart';
+import 'package:supermercado/modules/produto/produto_usecase.dart';
 
-class CadastroProdutoScreen extends StatefulWidget {
-  const CadastroProdutoScreen({super.key});
+class CadastroProdutoAdminScreen extends StatefulWidget {
+  const CadastroProdutoAdminScreen({super.key});
 
   @override
-  State<CadastroProdutoScreen> createState() => _CadastroProdutoScreenState();
+  State<CadastroProdutoAdminScreen> createState() => _CadastroProdutoAdminScreenState();
 }
 
-class _CadastroProdutoScreenState extends State<CadastroProdutoScreen> {
+class _CadastroProdutoAdminScreenState extends State<CadastroProdutoAdminScreen> {
+  //Controllers do TextField
   TextEditingController controllerNome = TextEditingController();
   TextEditingController controllerPreco = TextEditingController();
   TextEditingController controllerQuantidade = TextEditingController();
 
+  //Variáveis de erro
   String? erroNome;
   String? erroPreco;
   String? erroQuantidade;
 
-  void cadastrarProduto() {
+  //Casos de uso da aplicação
+  final ProdutoUseCase produtoUseCase = ProdutoUseCase(produtoRepo: ProdutoRepository());
+
+  void cadastrarProduto() async {
     setState(() {
-      if(controllerNome.text.isEmpty) {
-        erroNome = "Nome não pode estar vazio";
-      } else if(!RegExp(r'^[a-zA-Z]+$').hasMatch(controllerNome.text)) {
-        erroNome = "Nome deve ter apenas letras";
-      } else {
-        erroNome = null;
-      }
-
-      if(controllerPreco.text.isEmpty) {
-        erroPreco = "Preço não pode estar vazio";
-      } else if(!RegExp(r'^[1-9]+$').hasMatch(controllerPreco.text)) {
-        erroPreco = "Preço deve ter apenas números";
-      } else {
-        erroPreco = null;
-      }
-
-      if(controllerQuantidade.text.isEmpty) {
-        erroQuantidade = "Quantidade não pode estar vazio";
-      } else if(!RegExp(r'^[1-9]+$').hasMatch(controllerQuantidade.text)) {
-        erroQuantidade = "Quantidade deve ter apenas números";
-      } else {
-        erroQuantidade = null;
-      }
+      erroNome = produtoUseCase.validarNome(controllerNome.text);
+      erroPreco = produtoUseCase.validarPreco(controllerPreco.text);
+      erroQuantidade = produtoUseCase.validarQuantidade(controllerQuantidade.text);
     });
 
     if(erroNome==null && erroPreco==null && erroQuantidade==null) {
-      Produto produto = new Produto(nome: controllerNome.text, preco: double.parse(controllerPreco.text), quantidade: int.parse(controllerQuantidade.text));
-      context.read<ProdutoProvider>().addProduto(produto);
-      showDialog(
-        context: context, builder: (context) {
-          return AlertDialog(
-            title: const Text("Produto Cadastrado"),
-            actions: [
-              TextButton(
-                onPressed: Navigator.of(context).pop, 
-                child: const Text("Fechar"),
-              ),
-            ],
-          );
-        }
-      );
+      final resultado = await produtoUseCase.cadastrarProduto(controllerNome.text, double.parse(controllerPreco.text), int.parse(controllerQuantidade.text));
+
+      if(resultado!=null) {
+        context.read<ProdutoProvider>().addProduto(resultado);
+        showDialog(
+          context: context, builder: (context) {
+            return AlertDialog(
+              title: const Text("Produto Cadastrado"),
+              actions: [
+                TextButton(
+                  onPressed: Navigator.of(context).pop, 
+                  child: const Text("Fechar"),
+                ),
+              ],
+            );
+          }
+        );
+      } else {
+        showDialog(
+          context: context, builder: (context) {
+            return AlertDialog(
+              title: Text("Erro no cadastro do produto"),
+              actions: [
+                TextButton(
+                  onPressed: Navigator.of(context).pop, 
+                  child: const Text("Fechar"),
+                ),
+              ],
+            );
+          }
+        );
+      }
     }
   }
 
