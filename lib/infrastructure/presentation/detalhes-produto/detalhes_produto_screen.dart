@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supermercado/entities/enum_tipo_usuario.dart';
 import 'package:supermercado/entities/produto.dart';
+import 'package:supermercado/infrastructure/presentation/app/components/comprar_item_dialog.dart';
 import 'package:supermercado/infrastructure/presentation/editar-produto-admin/editar_produto_admin_screen.dart';
 import 'package:supermercado/infrastructure/presentation/providers/usuario_provider.dart';
 
@@ -81,7 +82,11 @@ class _DetalhesProdutoScreenState extends State<DetalhesProdutoScreen> {
         backgroundColor: Colors.white,
         onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => EditarProdutoAdminScreen(produto: widget.produto))),
         child: Icon(Icons.edit, color: Colors.black),
-      ) : null,
+      ) : FloatingActionButton(
+        backgroundColor: Colors.white,
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ComprarItemDialog(produto: widget.produto))),
+        child: Icon(Icons.add, color: Colors.black),
+      ),
     );
   }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supermercado/entities/enum_tipo_usuario.dart';
-import 'package:supermercado/infrastructure/presentation/app/components/comprar_item_dialog.dart';
+import 'package:supermercado/infrastructure/presentation/app/components/excluir_item_dialog.dart';
+import 'package:supermercado/infrastructure/presentation/carrinho/carrinho_screen.dart';
 import 'package:supermercado/infrastructure/presentation/detalhes-produto/detalhes_produto_screen.dart';
 import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
 import 'package:supermercado/infrastructure/presentation/providers/usuario_provider.dart';
@@ -14,7 +15,7 @@ class ListaProdutosScreen extends StatefulWidget {
 }
 
 class _ListaProdutosScreenState extends State<ListaProdutosScreen> {
-  bool modoCompra = false;
+  bool modoExcluir = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,14 +46,14 @@ class _ListaProdutosScreenState extends State<ListaProdutosScreen> {
                       padding: EdgeInsets.only(top: 30, right: 40, left: 40),
                       child: GestureDetector(
                         onTap: () {
-                          modoCompra ? showDialog(context: context, builder: (context) => ComprarItemDialog(produto: produto))
+                          modoExcluir ? showDialog(context: context, builder: (context) => ExcluirItemDialog(produto: produto))
                           : Navigator.push(context, MaterialPageRoute(builder: (context) => DetalhesProdutoScreen(produto: produto)));
                         },
                         child: Container(
                           width: 300,
                           height: 70,
                           decoration: BoxDecoration(
-                            color: modoCompra ? Colors.grey : Colors.white,
+                            color: modoExcluir ? Colors.red : Colors.white,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               width: 2,
@@ -62,27 +63,14 @@ class _ListaProdutosScreenState extends State<ListaProdutosScreen> {
                           child: Row(
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(left: 20, right: 70),
+                                padding: EdgeInsets.only(left: 20, right: 10),
                                 child: Text(produto.nome, 
                                   style: TextStyle(
-                                    fontSize: 20
+                                    fontSize: 30,
                                   ),
                                 ),
                               ),
                               Text("Preço: ${produto.preco}", style: TextStyle(fontSize: 12)),
-                              Padding(
-                                padding: EdgeInsets.only(left: 70),
-                                child: tipo == TipoUsuario.admin ?
-                                    IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        context.read<ProdutoProvider>().excluirProduto(produto);
-                                      }); 
-                                    },
-                                    icon: Icon(Icons.delete),
-                                  )
-                                : null,
-                              ),
                             ],
                           ),
                         ),
@@ -111,16 +99,20 @@ class _ListaProdutosScreenState extends State<ListaProdutosScreen> {
           ],
         ),
       ),
-      floatingActionButton: tipo == TipoUsuario.usuario ?
+      floatingActionButton: tipo == TipoUsuario.admin ?
        FloatingActionButton(
         backgroundColor: Colors.white,
         onPressed: () {
           setState(() {
-            modoCompra = !modoCompra;
+            modoExcluir = !modoExcluir;
           });
         },
-        child: Icon(Icons.shopping_cart, color: Colors.black),  
-      ) : null,
+        child: Icon(Icons.delete, color: Colors.black),  
+      ) : FloatingActionButton(
+        backgroundColor: Colors.white,
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CarrinhoScreen())),
+        child: Icon(Icons.shopping_cart, color: Colors.black),
+      ),
     );
   }
 }
