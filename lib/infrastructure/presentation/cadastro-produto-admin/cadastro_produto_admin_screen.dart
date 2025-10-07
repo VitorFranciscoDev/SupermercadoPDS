@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
-import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
+import 'package:supermercado/infrastructure/presentation/components/button_component.dart';
+import 'package:supermercado/infrastructure/presentation/components/text_field_component.dart';
 import 'package:supermercado/modules/produto/produto_repository.dart';
 import 'package:supermercado/modules/produto/produto_usecase.dart';
 
@@ -12,20 +12,21 @@ class CadastroProdutoAdminScreen extends StatefulWidget {
 }
 
 class _CadastroProdutoAdminScreenState extends State<CadastroProdutoAdminScreen> {
-  //Controllers do TextField
+  
+  // controllers do TextField
   TextEditingController controllerNome = TextEditingController();
   TextEditingController controllerPreco = TextEditingController();
   TextEditingController controllerQuantidade = TextEditingController();
 
-  //Variáveis de erro
+  // variáveis de erro
   String? erroNome;
   String? erroPreco;
   String? erroQuantidade;
 
-  //Casos de uso da aplicação
-  final ProdutoUseCase produtoUseCase = ProdutoUseCase(produtoRepository: ProdutoRepository());
+  final ProdutoUseCase produtoUseCase = ProdutoUseCase(produtoRepository: ProdutoRepository()); // casos de uso da aplicação
 
-  void cadastrarProduto() async {
+  // função para cadastrar o produto
+  Future<void> cadastrarProduto() async {
     setState(() {
       erroNome = produtoUseCase.validarNome(controllerNome.text);
       erroPreco = produtoUseCase.validarPreco(controllerPreco.text);
@@ -36,6 +37,7 @@ class _CadastroProdutoAdminScreenState extends State<CadastroProdutoAdminScreen>
       final resultado = await produtoUseCase.cadastrarProduto(controllerNome.text, double.parse(controllerPreco.text), int.parse(controllerQuantidade.text));
 
       if(resultado!=null) {
+        // mensagem na tela
         showDialog(
           context: context, builder: (context) {
             return AlertDialog(
@@ -50,6 +52,7 @@ class _CadastroProdutoAdminScreenState extends State<CadastroProdutoAdminScreen>
           }
         );
       } else {
+        // mensagem na tela
         showDialog(
           context: context, builder: (context) {
             return AlertDialog(

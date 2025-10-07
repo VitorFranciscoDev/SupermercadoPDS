@@ -11,14 +11,16 @@ class DatabaseProvider with ChangeNotifier {
   DatabaseProvider._internal();
   static Database? db;
 
-  //Getter pro Database
+  // getter pro Database
   Future<Database> get database async {
-    if(db!=null) return db!;
+    if(db!=null) return db!; // se for diferente de null, retorna o db
+
+    // se não for, inicia o db e o retorna depois
     db = await initDB();
     return db!;
   }
 
-  //Inicializa o banco e as tabelas
+  // inicializa o banco e as tabelas
   Future<Database> initDB() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, "supermercado.db");

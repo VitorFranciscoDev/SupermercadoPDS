@@ -34,6 +34,7 @@ class HomeAdminScreen extends StatelessWidget {
                     borderRadius: BorderRadiusGeometry.circular(20),
                   ),
                 ),
+                // navega para a tela da lista de produtos
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ListaProdutosScreen())),
                 child: const Text("Lista de Produtos", style: TextStyle(color: Colors.black)),
               ),
@@ -52,6 +53,7 @@ class HomeAdminScreen extends StatelessWidget {
                     borderRadius: BorderRadiusGeometry.circular(20),
                   ),
                 ),
+                // navega para a tela de cadastro de produtos
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CadastroProdutoAdminScreen())),
                 child: const Text("Adicionar Produto", style: TextStyle(color: Colors.black))
               ),

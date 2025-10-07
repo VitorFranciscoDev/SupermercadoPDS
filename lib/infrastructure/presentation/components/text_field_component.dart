@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class TextFieldComponent extends StatefulWidget {
-  const TextFieldComponent({ super.key, required this.controller, this.hint, this.erro, this.tipo, this.formatter });
-  final TextEditingController controller; //Controller que será passado ao botão
-  final String? hint; //Hint text que será passado ao botão
-  final String? erro; //Variável de erro que será passada ao botão
-  final TextInputType? tipo; //Tipo de teclado que irá aparecer
-  final TextInputFormatter? formatter; //Tipo de dígito que o TextField recebe(CPF só recebe números, por exemplo)
+  const TextFieldComponent({ super.key, required this.controller, this.hint, this.erro, this.tipo });
+  final TextEditingController controller; // controller que será passado ao botão
+  final String? hint; // hint text que será passado ao botão
+  final String? erro; // variável de erro que será passada ao botão
+  final TextInputType? tipo; // tipo de teclado que irá aparecer
 
   @override
   State<TextFieldComponent> createState() => _TextFieldComponentState();
 }
 
 class _TextFieldComponentState extends State<TextFieldComponent> {
+
   @override
   Widget build(BuildContext context) {
     return TextField(

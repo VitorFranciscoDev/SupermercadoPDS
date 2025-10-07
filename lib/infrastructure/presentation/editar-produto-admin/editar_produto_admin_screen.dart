@@ -1,32 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:supermercado/entities/produto.dart';
-import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
-import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
+import 'package:supermercado/infrastructure/presentation/components/button_component.dart';
+import 'package:supermercado/infrastructure/presentation/components/text_field_component.dart';
 import 'package:supermercado/modules/produto/produto_repository.dart';
 import 'package:supermercado/modules/produto/produto_usecase.dart';
 
 class EditarProdutoAdminScreen extends StatefulWidget {
   const EditarProdutoAdminScreen({ super.key, required this.produto });
-  final Produto produto;
+  final Produto produto; // produto que será editado
 
   @override
   State<EditarProdutoAdminScreen> createState() => _EditarProdutoAdminScreenState();
 }
 
 class _EditarProdutoAdminScreenState extends State<EditarProdutoAdminScreen> {
-  //Controllers do TextField
+  
+  // controllers do TextField
   TextEditingController controllerNome = TextEditingController();
   TextEditingController controllerPreco = TextEditingController();
   TextEditingController controllerQuantidade = TextEditingController();
 
-  //Variáveis de erro
+  // variáveis de erro
   String? erroNome;
   String? erroPreco;
   String? erroQuantidade;
 
-  //Casos de uso da aplicação
-  final ProdutoUseCase produtoUseCase = ProdutoUseCase(produtoRepository: ProdutoRepository());
+  final ProdutoUseCase produtoUseCase = ProdutoUseCase(produtoRepository: ProdutoRepository()); // casos de uso do produto
 
+  // quando a página for aberta, os text fields já começarão preenchidos com as informações do produto
   @override
   void initState() {
     super.initState();
@@ -35,17 +36,22 @@ class _EditarProdutoAdminScreenState extends State<EditarProdutoAdminScreen> {
     controllerQuantidade.text = widget.produto.quantidade.toString();
   }
 
-  void editarProduto() async {
+  // função para editar o produto
+  Future<void> editarProduto() async {
+
+    // variáveis de erro
     setState(() {
       erroNome = produtoUseCase.validarNome(controllerNome.text);
       erroPreco = produtoUseCase.validarPreco(controllerPreco.text);
       erroQuantidade = produtoUseCase.validarQuantidade(controllerQuantidade.text);
     });
 
+    // se não houver erros, tenta editar o produto
     if(erroNome==null && erroPreco==null && erroQuantidade==null) {
-      final resultado = await produtoUseCase.cadastrarProduto(controllerNome.text, double.parse(controllerPreco.text), int.parse(controllerQuantidade.text));
+      final resultado = await produtoUseCase.editarProduto(controllerNome.text, double.parse(controllerPreco.text), int.parse(controllerQuantidade.text));
 
-      if(resultado!=null) {
+      if(resultado) {
+        // mensagem na tela
         showDialog(
           context: context, builder: (context) {
             return AlertDialog(
@@ -60,6 +66,7 @@ class _EditarProdutoAdminScreenState extends State<EditarProdutoAdminScreen> {
           }
         );
       } else {
+        // mensagem na tela
         showDialog(
           context: context, builder: (context) {
             return AlertDialog(

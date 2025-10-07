@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:supermercado/entities/enum_tipo_usuario.dart';
-import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
-import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
+import 'package:supermercado/infrastructure/presentation/components/button_component.dart';
+import 'package:supermercado/infrastructure/presentation/components/text_field_component.dart';
 import 'package:supermercado/infrastructure/presentation/cadastro/cadastro_screen.dart';
 import 'package:supermercado/infrastructure/presentation/home-admin/home_admin_screen.dart';
 import 'package:supermercado/infrastructure/presentation/lista-produtos/lista_produtos_screen.dart';
@@ -19,27 +19,31 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  //Controllers dos TextFields
+  // controllers dos TextFields
   TextEditingController controllerNome = TextEditingController();
   TextEditingController controllerCPF = TextEditingController();
 
-  //Variáveis de erro
+  // variáveis de erro
   String? erroNome;
   String? erroCPF;
 
-  //Casos de uso do usuário
-  final UsuarioUseCase usuarioUseCase = UsuarioUseCase(usuarioRepo: UsuarioRepository());
+  final UsuarioUseCase usuarioUseCase = UsuarioUseCase(usuarioRepo: UsuarioRepository()); // casos de uso do usuário
 
-  void entrar() async {
+  // função para o usuário logar no app
+  Future<void> entrar() async {
+
+    // variáveis de erro
     setState(() {
       erroNome = usuarioUseCase.validarNome(controllerNome.text);
       erroCPF = usuarioUseCase.validarCPF(controllerCPF.text);
     });
 
+    // caso não haja erros, tenta logar
     if(erroNome==null && erroCPF==null) {
       final resultado = await usuarioUseCase.fazerLogin(controllerNome.text, controllerCPF.text);
 
       if(resultado!=null) {
+        // mensagem na tela
         showDialog(
           context: context, 
           builder: (context) => AlertDialog(
@@ -59,6 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
       } else {
+        // mensagem na tela
         showDialog(
           context: context, 
           builder: (context) => AlertDialog(
@@ -119,7 +124,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         hint: "CPF",
                         erro: erroCPF,
                         tipo: TextInputType.number,
-                        formatter: FilteringTextInputFormatter.digitsOnly,
                       ),
                     ),
                     Padding(
@@ -135,6 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           const Text("Ainda não tem uma conta?"),
                           TextButton(
+                            // navega para a tela de cadastro
                             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CadastroScreen())), 
                             child: const Text("Clique aqui para ir ao Cadastro!")
                           ),

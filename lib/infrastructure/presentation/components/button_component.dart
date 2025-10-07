@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class ButtonComponent extends StatefulWidget {
   const ButtonComponent({ super.key, required this.metodo, required this.mensagem });
-  final void Function() metodo; //Função que irá ser passada ao botão
-  final String mensagem; //Mensagem do botão
+  final void Function() metodo; // função que irá ser passada ao botão
+  final String mensagem; // mensagem do botão
 
   @override
   State<ButtonComponent> createState() => _ButtonComponentState();

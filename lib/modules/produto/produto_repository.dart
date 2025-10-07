@@ -4,18 +4,32 @@ import 'package:supermercado/infrastructure/database/database_provider.dart';
 class ProdutoRepository {
   final DatabaseProvider dbProvider = DatabaseProvider();
 
+  // função para registrar o produto no banco
   Future<int> registrarProduto(Produto produto) async {
     final db = await dbProvider.database;
-    Map<String, dynamic> produtoMap = produto.toMap();
-    return await db.insert('produtos', produtoMap);
+    return await db.insert('produtos', produto.toMap());
   }
 
-  Future<void> excluirProduto(int? id) async {
+  // função para excluir o produto
+  Future<int> excluirProduto(int? id) async {
     final db = await dbProvider.database;
 
-    await db.delete('produtos', where: 'id = ?', whereArgs: [id]);
+    return await db.delete('produtos', where: 'id = ?', whereArgs: [id]);
   }
 
+  // função para editar o produto
+  Future<int> editarProduto(Produto produto) async {
+    final db = await dbProvider.database;
+
+    return await db.update(
+      'produtos',
+      produto.toMap(),
+      where: 'id = ?',
+      whereArgs: [produto.id],
+    );
+  }
+
+  // função para listar os produtos
   Future<List<Produto>> listarProdutos() async {
     final db = await dbProvider.database;
 

@@ -1,7 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 
 class UsuarioTable {
-  //Cria a tabela de usuários
+  // cria a tabela de usuários
   static createUsuarioTable(Database db) async {
     await db.execute('''
       CREATE TABLE usuarios(

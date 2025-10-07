@@ -28,16 +28,14 @@ class ProdutoUseCase implements IProdutoUseCase {
     try {
       int result = await produtoRepository.registrarProduto(produto);
 
-      if(result>0) {
-        return produto;
-      } else {
-        return null;
-      }
+      if(result>0) return produto;
+      return null;      
     } catch(e) {
       return null;
     }
   }
 
+  // função para carregar os produtos
   Future<List<Produto>> carregarProdutos() async {
     try {
       return await produtoRepository.listarProdutos();
@@ -46,11 +44,27 @@ class ProdutoUseCase implements IProdutoUseCase {
     }
   }
 
-  Future<void> excluirProduto(Produto produto) async {
+  @override
+  Future<bool> excluirProduto(Produto produto) async {
     try {
-      await produtoRepository.excluirProduto(produto.id);
-    } catch(e) {
-      throw Exception("Erro Inesperado");
+      final result = await produtoRepository.excluirProduto(produto.id);
+      
+      return result > 0;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> editarProduto(String nome, double preco, int quantidade) async {
+    Produto produto = Produto(nome: nome, preco: preco, quantidade: quantidade);
+    
+    try {
+      final result = await produtoRepository.editarProduto(produto);
+
+      return result > 0;
+    } catch (e) {
+      return false;
     }
   }
 

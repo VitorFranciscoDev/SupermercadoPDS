@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:supermercado/entities/produto.dart';
-import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
+import 'package:supermercado/infrastructure/presentation/components/text_field_component.dart';
 
-class ComprarItemDialog extends StatefulWidget {
-  const ComprarItemDialog({super.key, required this.produto});
-  final Produto produto;
+class AdicionarCarrinhoDialog extends StatefulWidget {
+  const AdicionarCarrinhoDialog({super.key, required this.produto});
+  final Produto produto; // produto que será adicionado ao carrinho
 
   @override
-  State<ComprarItemDialog> createState() => _ComprarItemDialogState();
+  State<AdicionarCarrinhoDialog> createState() => _AdicionarCarrinhoDialogState();
 }
 
-class _ComprarItemDialogState extends State<ComprarItemDialog> {
-  TextEditingController controllerQuantidade = TextEditingController();
-  int quantidade = 1;
+class _AdicionarCarrinhoDialogState extends State<AdicionarCarrinhoDialog> {
+  TextEditingController controllerQuantidade = TextEditingController(); // controller do textfield
+
+  int quantidade = 1; // quantidade inicial do carrinho
   
+  // quando a página for aberta, o texto do text field será a variável quantidade
   @override
   void initState() {
     super.initState();
@@ -41,6 +43,7 @@ class _ComprarItemDialogState extends State<ComprarItemDialog> {
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
+                      // aumenta a quantidade
                       if(quantidade<widget.produto.quantidade) {
                         quantidade++;
                         controllerQuantidade.text = quantidade.toString();
@@ -53,6 +56,7 @@ class _ComprarItemDialogState extends State<ComprarItemDialog> {
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
+                      // diminui a quantidade
                       if(quantidade>0) {
                         quantidade--;
                         controllerQuantidade.text = quantidade.toString();
@@ -68,12 +72,13 @@ class _ComprarItemDialogState extends State<ComprarItemDialog> {
       ),
       actions: [
         TextButton(
+          // sai do alert
           onPressed: () => Navigator.of(context).pop(),
           child: const Text("Cancelar"),
         ),
         TextButton(
           onPressed: () {
-
+            
           }, 
           child: const Text("Comprar"),
         ),

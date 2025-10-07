@@ -1,5 +1,6 @@
 import 'package:supermercado/entities/produto.dart';
 
+// classe abstrata com os contratos
 abstract class IProdutoUseCase {
   String? validarNome(String nome);
 
@@ -9,7 +10,7 @@ abstract class IProdutoUseCase {
 
   Future<Produto?> cadastrarProduto(String nome, double preco, int quantidade);
 
-  //Future<Produto?> editarProduto(Produto produto);
+  Future<bool> editarProduto(String nome, double preco, int quantidade);
 
-  Future<void> excluirProduto(Produto produto);
+  Future<bool> excluirProduto(Produto produto);
 }

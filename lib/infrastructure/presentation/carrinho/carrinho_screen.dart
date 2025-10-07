@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
+import 'package:supermercado/infrastructure/presentation/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
 
 class CarrinhoScreen extends StatefulWidget {

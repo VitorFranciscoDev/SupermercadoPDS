@@ -1,16 +1,16 @@
 import 'package:supermercado/entities/enum_tipo_usuario.dart';
 
 class Usuario {
-  //Variáveis
+  // variáveis
   final int? id;
   final String nome;
   final String cpf;
   final TipoUsuario tipo;
 
-  //Construtor
+  // construtor
   Usuario({ this.id, required this.nome, required this.cpf, required this.tipo });
 
-  //Transforma em Map
+  // transforma em Map
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -20,7 +20,7 @@ class Usuario {
     };
   }
 
-  //Desconstrói o Map
+  // desconstrói o Map
   factory Usuario.fromMap(Map<String, dynamic> map) {
     return Usuario(
       id: map['id'],

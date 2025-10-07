@@ -1,7 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 
 class ProdutoTable {
-  //Cria a tabela de produtos
+  // cria a tabela de produtos
   static createProdutoTable(Database db) async {
     await db.execute('''
       CREATE TABLE produtos(

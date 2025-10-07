@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supermercado/entities/enum_tipo_usuario.dart';
-import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
-import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
+import 'package:supermercado/infrastructure/presentation/components/button_component.dart';
+import 'package:supermercado/infrastructure/presentation/components/text_field_component.dart';
 import 'package:supermercado/infrastructure/presentation/login/login_screen.dart';
 import 'package:supermercado/modules/usuario/usuario_usecase.dart';
 import 'package:supermercado/modules/usuario/usuario_repository.dart';
@@ -15,34 +15,34 @@ class CadastroScreen extends StatefulWidget {
 }
 
 class _CadastroScreenState extends State<CadastroScreen> {
-  //Controllers de TextField
+  
+  // controllers de TextField
   TextEditingController controllerNome = TextEditingController();
   TextEditingController controllerCPF = TextEditingController();
 
-  //Tipo do Usuário(usuário ou admin)
-  TipoUsuario tipoUsuario = TipoUsuario.usuario;
+  TipoUsuario tipoUsuario = TipoUsuario.usuario; // tipo do usuário
 
-  //Variáveis de erro dos TextFields
+  // variáveis de erro dos textfields
   String? erroNome;
   String? erroCPF;
 
-  //Casos de Uso do Usuário
-  final UsuarioUseCase usuarioUseCase = UsuarioUseCase(usuarioRepo: UsuarioRepository());
+  final UsuarioUseCase usuarioUseCase = UsuarioUseCase(usuarioRepo: UsuarioRepository()); // casos de uso do usuário
 
-  //Função para cadastrar o usuário
+  // função para cadastrar o usuário
   void cadastrar() async {
-    //Variáveis de erro recebem a mensagem de erro
+
+    // variáveis recebem a mensagem de erro
     setState(() {
       erroNome = usuarioUseCase.validarNome(controllerNome.text);
       erroCPF = usuarioUseCase.validarCPF(controllerCPF.text);
     });
 
-    //Se não houver mensagem de erro, tenta fazer o cadastro
+    // se não houver mensagem de erro, tenta fazer o cadastro
     if(erroNome==null && erroCPF==null) {
       final resultado = await usuarioUseCase.cadastrarUsuario(controllerNome.text, controllerCPF.text, tipoUsuario);
 
       if(resultado==null) {
-        //Mensagem na tela
+        // mensagem na tela
         showDialog(
           context: context, 
           builder: (context) => AlertDialog(
@@ -59,6 +59,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
           ),
         );
       } else {
+        // mensagem de erro caso dê algum problema no cadastro
         setState(() {
           erroCPF = resultado;
         });
@@ -110,7 +111,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
                           hint: "CPF",
                           erro: erroCPF,
                           tipo: TextInputType.number,
-                          formatter: FilteringTextInputFormatter.digitsOnly,
                         ),
                       ),
                       Padding(
@@ -157,8 +157,9 @@ class _CadastroScreenState extends State<CadastroScreen> {
                           children: [
                             const Text("Já tem uma conta?"),
                             TextButton(
+                              // navega para a página de login
                               onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen())), 
-                              child: const Text("Clique aqui para ir ao Login!")
+                              child: const Text("Clique aqui para ir ao Login!"),
                             ),
                           ],
                         ),
@@ -171,7 +172,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
             ],
           ),
         ),
-      
     );
   }
 }

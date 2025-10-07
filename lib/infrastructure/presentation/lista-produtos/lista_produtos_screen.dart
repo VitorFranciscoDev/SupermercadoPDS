@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supermercado/entities/enum_tipo_usuario.dart';
-import 'package:supermercado/infrastructure/presentation/app/components/excluir_item_dialog.dart';
+import 'package:supermercado/infrastructure/presentation/components/excluir_item_dialog.dart';
 import 'package:supermercado/infrastructure/presentation/carrinho/carrinho_screen.dart';
 import 'package:supermercado/infrastructure/presentation/detalhes-produto/detalhes_produto_screen.dart';
 import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
@@ -15,8 +15,9 @@ class ListaProdutosScreen extends StatefulWidget {
 }
 
 class _ListaProdutosScreenState extends State<ListaProdutosScreen> {
-  bool modoExcluir = false;
+  bool modoExcluir = false; // função para alternar a tela quando o usuário clicar no botão
 
+  // carrega os produtos do db
   @override
   void initState() {
     super.initState();
@@ -25,6 +26,7 @@ class _ListaProdutosScreenState extends State<ListaProdutosScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // tipo de usuário e a lista de produtos
     final tipo = context.read<UsuarioProvider>().usuario!.tipo;
     final produtos = context.watch<ProdutoProvider>().produtos;
 
@@ -52,6 +54,7 @@ class _ListaProdutosScreenState extends State<ListaProdutosScreen> {
                       padding: EdgeInsets.only(top: 30, right: 40, left: 40),
                       child: GestureDetector(
                         onTap: () {
+                          // se a variável for true, chama o dialog de excluir o item, senão navega para a lista de detalhes do produto
                           modoExcluir ? showDialog(context: context, builder: (context) => ExcluirItemDialog(produto: produto))
                           : Navigator.push(context, MaterialPageRoute(builder: (context) => DetalhesProdutoScreen(produto: produto)));
                         },

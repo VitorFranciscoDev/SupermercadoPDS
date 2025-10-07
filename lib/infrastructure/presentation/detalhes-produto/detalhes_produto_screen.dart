@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supermercado/entities/enum_tipo_usuario.dart';
 import 'package:supermercado/entities/produto.dart';
-import 'package:supermercado/infrastructure/presentation/app/components/comprar_item_dialog.dart';
+import 'package:supermercado/infrastructure/presentation/components/adicionar_carrinho_dialog.dart';
 import 'package:supermercado/infrastructure/presentation/editar-produto-admin/editar_produto_admin_screen.dart';
 import 'package:supermercado/infrastructure/presentation/providers/usuario_provider.dart';
 
 class DetalhesProdutoScreen extends StatefulWidget {
   const DetalhesProdutoScreen({ super.key, required this.produto });
-  final Produto produto;
+  final Produto produto; // produto que será mostrado os detalhes
 
   @override
   State<DetalhesProdutoScreen> createState() => _DetalhesProdutoScreenState();
@@ -17,6 +17,7 @@ class DetalhesProdutoScreen extends StatefulWidget {
 class _DetalhesProdutoScreenState extends State<DetalhesProdutoScreen> {
   @override
   Widget build(BuildContext context) {
+    // variável que recebe o tipo do usuário do provider
     final tipo = context.read<UsuarioProvider>().usuario!.tipo;
 
     return Scaffold(
@@ -84,7 +85,7 @@ class _DetalhesProdutoScreenState extends State<DetalhesProdutoScreen> {
         child: Icon(Icons.edit, color: Colors.black),
       ) : FloatingActionButton(
         backgroundColor: Colors.white,
-        onPressed: () => showDialog(context: context, builder: (context) => ComprarItemDialog(produto: widget.produto)),
+        onPressed: () => showDialog(context: context, builder: (context) => AdicionarCarrinhoDialog(produto: widget.produto)),
         child: Icon(Icons.add, color: Colors.black),
       ),
     );
