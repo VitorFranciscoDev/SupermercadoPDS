@@ -68,4 +68,20 @@ class ProdutoUseCase implements IProdutoUseCase {
     }
   }
 
+  Future<bool> atualizarQuantidade(Produto produto, int quantidade) async {
+    Produto produtoAtualizado = Produto(
+      nome: produto.nome,
+      preco: produto.preco,
+      quantidade: produto.quantidade - quantidade,
+    );
+
+    try {
+      final result = await produtoRepository.editarProduto(produtoAtualizado);
+      
+      return result > 0;
+    } catch (e) {
+      return false;
+    }
+  }
+
 }

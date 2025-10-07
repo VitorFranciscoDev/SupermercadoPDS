@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supermercado/infrastructure/presentation/components/button_component.dart';
-import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
+import 'package:supermercado/infrastructure/presentation/components/nota_fiscal.dart';
+import 'package:supermercado/infrastructure/presentation/providers/carrinho_provider.dart';
+import 'package:supermercado/modules/produto/produto_repository.dart';
+import 'package:supermercado/modules/produto/produto_usecase.dart';
 
 class CarrinhoScreen extends StatefulWidget {
   const CarrinhoScreen({super.key});
@@ -12,13 +15,25 @@ class CarrinhoScreen extends StatefulWidget {
 
 class _CarrinhoScreenState extends State<CarrinhoScreen> {
 
-  void comprarItens() {
+  final ProdutoUseCase produtoUseCase = ProdutoUseCase(produtoRepository: ProdutoRepository());
 
+  Future<void> comprarItens() async {
+    final carrinho = context.read<CarrinhoProvider>().carrinho;
+
+    for (final car in carrinho) {
+      await produtoUseCase.atualizarQuantidade(car, car.quantidade);
+    }
+
+    setState(() {
+      context.read<CarrinhoProvider>().limparCarrinho();
+    });
+
+    showDialog(context: context, builder: (context) => NotaFiscal());
   }
 
   @override
   Widget build(BuildContext context) {
-    final produtos = context.watch<ProdutoProvider>().produtos;
+    final carrinho = context.watch<CarrinhoProvider>().carrinho;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -39,11 +54,11 @@ class _CarrinhoScreenState extends State<CarrinhoScreen> {
                 border: Border.all(width: 2, color: Colors.black),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: produtos.isNotEmpty
+              child: carrinho.isNotEmpty
                 ? ListView.builder(
-                  itemCount: produtos.length,
+                  itemCount: carrinho.length,
                   itemBuilder: (context, index) {
-                    final produto = produtos[index];
+                    final item = carrinho[index];
                     return Padding(
                       padding: EdgeInsets.only(
                         bottom: 20,
@@ -63,12 +78,12 @@ class _CarrinhoScreenState extends State<CarrinhoScreen> {
                             Padding(
                               padding: EdgeInsets.only(left: 20, right: 10),
                               child: Text(
-                                produto.nome,
+                                item.nome,
                                 style: TextStyle(fontSize: 30),
                               ),
                             ),
                             Text(
-                              "Preço: ${produto.preco}",
+                              "Preço: ${item.preco}",
                               style: TextStyle(fontSize: 12),
                             ),
                           ],

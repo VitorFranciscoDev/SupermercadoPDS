@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:supermercado/entities/produto.dart';
 import 'package:supermercado/infrastructure/presentation/components/text_field_component.dart';
+import 'package:supermercado/infrastructure/presentation/lista-produtos/lista_produtos_screen.dart';
+import 'package:supermercado/infrastructure/presentation/providers/carrinho_provider.dart';
 
 class AdicionarCarrinhoDialog extends StatefulWidget {
   const AdicionarCarrinhoDialog({super.key, required this.produto});
@@ -78,7 +81,8 @@ class _AdicionarCarrinhoDialogState extends State<AdicionarCarrinhoDialog> {
         ),
         TextButton(
           onPressed: () {
-            
+            context.read<CarrinhoProvider>().adicionarItem(widget.produto, quantidade);
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ListaProdutosScreen()));
           }, 
           child: const Text("Comprar"),
         ),
