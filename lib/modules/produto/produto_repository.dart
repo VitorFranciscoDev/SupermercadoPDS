@@ -10,16 +10,19 @@ class ProdutoRepository {
     return await db.insert('produtos', produtoMap);
   }
 
-  Future<Produto?> buscarProdutoPorId(Produto produto) async {
+  Future<void> excluirProduto(int? id) async {
     final db = await dbProvider.database;
 
-    List<Map<String, dynamic>> result = await db.query(
-      'produtos',
-      where: 'id = ?',
-      whereArgs: [produto.id],
-    );
+    await db.delete('produtos', where: 'id = ?', whereArgs: [id]);
+  }
 
-    result.isNotEmpty ? produto : null;
-    return null;
+  Future<List<Produto>> listarProdutos() async {
+    final db = await dbProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db.query('produtos');
+
+    return List.generate(maps.length, (i) {
+      return Produto.fromMap(maps[i]);
+    });
   }
 }

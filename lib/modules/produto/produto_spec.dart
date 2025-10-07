@@ -10,4 +10,6 @@ abstract class IProdutoUseCase {
   Future<Produto?> cadastrarProduto(String nome, double preco, int quantidade);
 
   //Future<Produto?> editarProduto(Produto produto);
+
+  Future<void> excluirProduto(Produto produto);
 }

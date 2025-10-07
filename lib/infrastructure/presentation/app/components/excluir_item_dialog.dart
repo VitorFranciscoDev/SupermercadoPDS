@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:supermercado/entities/produto.dart';
-import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
+import 'package:supermercado/modules/produto/produto_repository.dart';
+import 'package:supermercado/modules/produto/produto_usecase.dart';
 
 class ExcluirItemDialog extends StatefulWidget {
   const ExcluirItemDialog({super.key, required this.produto});
@@ -12,6 +12,8 @@ class ExcluirItemDialog extends StatefulWidget {
 }
 
 class _ExcluirItemDialogState extends State<ExcluirItemDialog> {
+  final ProdutoUseCase produtoUseCase = ProdutoUseCase(produtoRepository: ProdutoRepository());
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -24,7 +26,7 @@ class _ExcluirItemDialogState extends State<ExcluirItemDialog> {
         TextButton(
           onPressed: () {
             setState(() {
-              context.read<ProdutoProvider>().excluirProduto(widget.produto);
+              produtoUseCase.excluirProduto(widget.produto);
               Navigator.of(context).pop();
             });
           }, 

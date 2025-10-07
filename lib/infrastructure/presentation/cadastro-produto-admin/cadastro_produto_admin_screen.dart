@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/app/components/text_field_component.dart';
-import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
 import 'package:supermercado/modules/produto/produto_repository.dart';
 import 'package:supermercado/modules/produto/produto_usecase.dart';
 
@@ -25,7 +23,7 @@ class _CadastroProdutoAdminScreenState extends State<CadastroProdutoAdminScreen>
   String? erroQuantidade;
 
   //Casos de uso da aplicação
-  final ProdutoUseCase produtoUseCase = ProdutoUseCase(produtoRepo: ProdutoRepository());
+  final ProdutoUseCase produtoUseCase = ProdutoUseCase(produtoRepository: ProdutoRepository());
 
   void cadastrarProduto() async {
     setState(() {
@@ -38,7 +36,6 @@ class _CadastroProdutoAdminScreenState extends State<CadastroProdutoAdminScreen>
       final resultado = await produtoUseCase.cadastrarProduto(controllerNome.text, double.parse(controllerPreco.text), int.parse(controllerQuantidade.text));
 
       if(resultado!=null) {
-        context.read<ProdutoProvider>().addProduto(resultado);
         showDialog(
           context: context, builder: (context) {
             return AlertDialog(

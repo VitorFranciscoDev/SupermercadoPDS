@@ -3,29 +3,30 @@ import 'package:supermercado/modules/produto/produto_repository.dart';
 import 'package:supermercado/modules/produto/produto_spec.dart';
 
 class ProdutoUseCase implements IProdutoUseCase {
-  ProdutoUseCase({ required this.produtoRepo });
+  ProdutoUseCase({ required this.produtoRepository });
 
-  //Repositório de produtos
-  final ProdutoRepository produtoRepo;
+  // repositório de produtos
+  final ProdutoRepository produtoRepository;
   
-  //Função para validar o nome
+  // função para validar o nome
   @override
   String? validarNome(String nome) => nome.isEmpty ? "Nome não pode estar vazio" : null;
 
-  //Função para validar o preço
+  // função para validar o preço
   @override
   String? validarPreco(String preco) => preco.isEmpty ? "Preço não pode estar vazio" : null;
 
-  //Função para validar a quantidade
+  // função para validar a quantidade
   @override
   String? validarQuantidade(String quantidade) => quantidade.isEmpty ? "Quantidade não pode estar vazia" : null;
 
+  // função para cadastrar o produto
   @override
   Future<Produto?> cadastrarProduto(String nome, double preco, int quantidade) async {
     Produto produto = Produto(nome: nome, preco: preco, quantidade: quantidade);
 
     try {
-      int result = await produtoRepo.registrarProduto(produto);
+      int result = await produtoRepository.registrarProduto(produto);
 
       if(result>0) {
         return produto;
@@ -37,5 +38,20 @@ class ProdutoUseCase implements IProdutoUseCase {
     }
   }
 
+  Future<List<Produto>> carregarProdutos() async {
+    try {
+      return await produtoRepository.listarProdutos();
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<void> excluirProduto(Produto produto) async {
+    try {
+      await produtoRepository.excluirProduto(produto.id);
+    } catch(e) {
+      throw Exception("Erro Inesperado");
+    }
+  }
 
 }

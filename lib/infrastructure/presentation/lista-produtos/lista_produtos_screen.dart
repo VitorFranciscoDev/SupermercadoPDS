@@ -18,6 +18,12 @@ class _ListaProdutosScreenState extends State<ListaProdutosScreen> {
   bool modoExcluir = false;
 
   @override
+  void initState() {
+    super.initState();
+    context.read<ProdutoProvider>().carregarProdutos();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final tipo = context.read<UsuarioProvider>().usuario!.tipo;
     final produtos = context.watch<ProdutoProvider>().produtos;

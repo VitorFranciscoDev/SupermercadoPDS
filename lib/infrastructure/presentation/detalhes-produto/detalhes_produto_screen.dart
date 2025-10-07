@@ -84,7 +84,7 @@ class _DetalhesProdutoScreenState extends State<DetalhesProdutoScreen> {
         child: Icon(Icons.edit, color: Colors.black),
       ) : FloatingActionButton(
         backgroundColor: Colors.white,
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ComprarItemDialog(produto: widget.produto))),
+        onPressed: () => showDialog(context: context, builder: (context) => ComprarItemDialog(produto: widget.produto)),
         child: Icon(Icons.add, color: Colors.black),
       ),
     );
