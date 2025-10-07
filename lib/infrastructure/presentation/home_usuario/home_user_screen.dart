@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supermercado/infrastructure/presentation/app/components/comprar_item_dialog.dart';
 import 'package:supermercado/infrastructure/presentation/detalhes_produto_admin/detalhes_produto_admin_screen.dart';
 import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
 
@@ -42,7 +43,7 @@ class _HomeUserScreenState extends State<HomeUserScreen> {
                       child: GestureDetector(
                         onTap: () {
                           if(modoCompra) {
-                            
+                            showDialog(context: context, builder: (context) => ComprarItemDialog(produto: produto));
                           } else {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => DetalhesProdutoAdminScreen(produto: produto)));
                           }
