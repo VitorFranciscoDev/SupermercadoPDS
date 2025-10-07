@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:supermercado/entities/produto.dart';
-import 'package:supermercado/infrastructure/presentation/editar_produto_admin_screen/editar_produto_admin_screen.dart';
+import 'package:supermercado/infrastructure/presentation/editar-produto-admin/editar_produto_admin_screen.dart';
 
-class DetalhesProdutoAdminScreen extends StatefulWidget {
-  const DetalhesProdutoAdminScreen({ super.key, required this.produto });
+class DetalhesProdutoScreen extends StatefulWidget {
+  const DetalhesProdutoScreen({ super.key, required this.produto });
   final Produto produto;
 
   @override
-  State<DetalhesProdutoAdminScreen> createState() => _DetalhesProdutoAdminScreenState();
+  State<DetalhesProdutoScreen> createState() => _DetalhesProdutoScreenState();
 }
 
-class _DetalhesProdutoAdminScreenState extends State<DetalhesProdutoAdminScreen> {
+class _DetalhesProdutoScreenState extends State<DetalhesProdutoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

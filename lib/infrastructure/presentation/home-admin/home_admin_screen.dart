@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:supermercado/infrastructure/presentation/cadastro_produto_admin/cadastro_produto_admin_screen.dart';
-import 'package:supermercado/infrastructure/presentation/lista_produtos_admin/lista_produtos_admin_screen.dart';
+import 'package:supermercado/infrastructure/presentation/cadastro-produto-admin/cadastro_produto_admin_screen.dart';
+import 'package:supermercado/infrastructure/presentation/lista-produtos/lista_produtos_screen.dart';
 
 class HomeAdminScreen extends StatelessWidget {
   const HomeAdminScreen({super.key});
@@ -34,7 +34,7 @@ class HomeAdminScreen extends StatelessWidget {
                     borderRadius: BorderRadiusGeometry.circular(20),
                   ),
                 ),
-                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ListaProdutosAdminScreen())),
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ListaProdutosScreen())),
                 child: const Text("Lista de Produtos", style: TextStyle(color: Colors.black)),
               ),
             ),
