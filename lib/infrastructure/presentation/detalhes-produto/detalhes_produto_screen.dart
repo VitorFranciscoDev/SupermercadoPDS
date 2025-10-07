@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:supermercado/entities/enum_tipo_usuario.dart';
 import 'package:supermercado/entities/produto.dart';
 import 'package:supermercado/infrastructure/presentation/editar-produto-admin/editar_produto_admin_screen.dart';
+import 'package:supermercado/infrastructure/presentation/providers/usuario_provider.dart';
 
 class DetalhesProdutoScreen extends StatefulWidget {
   const DetalhesProdutoScreen({ super.key, required this.produto });
@@ -13,6 +16,8 @@ class DetalhesProdutoScreen extends StatefulWidget {
 class _DetalhesProdutoScreenState extends State<DetalhesProdutoScreen> {
   @override
   Widget build(BuildContext context) {
+    final tipo = context.read<UsuarioProvider>().usuario!.tipo;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -71,11 +76,12 @@ class _DetalhesProdutoScreenState extends State<DetalhesProdutoScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: tipo == TipoUsuario.admin
+        ? FloatingActionButton(
         backgroundColor: Colors.white,
         onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => EditarProdutoAdminScreen(produto: widget.produto))),
         child: Icon(Icons.edit, color: Colors.black),
-      ),
+      ) : null,
     );
   }
 }

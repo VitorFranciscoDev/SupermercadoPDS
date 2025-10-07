@@ -12,6 +12,13 @@ class ComprarItemDialog extends StatefulWidget {
 
 class _ComprarItemDialogState extends State<ComprarItemDialog> {
   TextEditingController controllerQuantidade = TextEditingController();
+  int quantidade = 1;
+  
+  @override
+  void initState() {
+    super.initState();
+    controllerQuantidade.text = quantidade.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +40,24 @@ class _ComprarItemDialogState extends State<ComprarItemDialog> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-
+                    setState(() {
+                      if(quantidade<widget.produto.quantidade) {
+                        quantidade++;
+                        controllerQuantidade.text = quantidade.toString();
+                      }
+                    });
                   }, 
                   child: const Text("+"),
                 ),
                 Padding(padding: EdgeInsets.only(right: 5)),
                 ElevatedButton(
                   onPressed: () {
-
+                    setState(() {
+                      if(quantidade>0) {
+                        quantidade--;
+                        controllerQuantidade.text = quantidade.toString();
+                      }
+                    });
                   }, 
                   child: const Text("-")
                 ),

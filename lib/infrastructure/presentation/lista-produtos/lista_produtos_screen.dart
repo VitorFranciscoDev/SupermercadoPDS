@@ -45,17 +45,14 @@ class _ListaProdutosScreenState extends State<ListaProdutosScreen> {
                       padding: EdgeInsets.only(top: 30, right: 40, left: 40),
                       child: GestureDetector(
                         onTap: () {
-                          if(modoCompra) {
-                            showDialog(context: context, builder: (context) => ComprarItemDialog(produto: produto));
-                          } else {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => DetalhesProdutoScreen(produto: produto)));
-                          }
+                          modoCompra ? showDialog(context: context, builder: (context) => ComprarItemDialog(produto: produto))
+                          : Navigator.push(context, MaterialPageRoute(builder: (context) => DetalhesProdutoScreen(produto: produto)));
                         },
                         child: Container(
                           width: 300,
                           height: 70,
                           decoration: BoxDecoration(
-                            color: Colors.grey,
+                            color: modoCompra ? Colors.grey : Colors.white,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               width: 2,
@@ -65,14 +62,27 @@ class _ListaProdutosScreenState extends State<ListaProdutosScreen> {
                           child: Row(
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(left: 10, right: 180),
+                                padding: EdgeInsets.only(left: 20, right: 70),
                                 child: Text(produto.nome, 
                                   style: TextStyle(
                                     fontSize: 20
                                   ),
                                 ),
                               ),
-                              Text(produto.preco.toString()),
+                              Text("Preço: ${produto.preco}", style: TextStyle(fontSize: 12)),
+                              Padding(
+                                padding: EdgeInsets.only(left: 70),
+                                child: tipo == TipoUsuario.admin ?
+                                    IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        context.read<ProdutoProvider>().excluirProduto(produto);
+                                      }); 
+                                    },
+                                    icon: Icon(Icons.delete),
+                                  )
+                                : null,
+                              ),
                             ],
                           ),
                         ),
