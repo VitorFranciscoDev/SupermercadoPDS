@@ -35,7 +35,7 @@ class _ComprarItemDialogState extends State<ComprarItemDialog> {
                   onPressed: () {
 
                   }, 
-                  child: const Text("+")
+                  child: const Text("+"),
                 ),
                 Padding(padding: EdgeInsets.only(right: 5)),
                 ElevatedButton(
