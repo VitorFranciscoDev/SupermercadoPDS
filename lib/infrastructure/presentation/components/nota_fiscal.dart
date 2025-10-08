@@ -1,46 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:supermercado/infrastructure/presentation/providers/carrinho_provider.dart';
+import 'package:supermercado/entities/produto.dart';
 import 'package:supermercado/infrastructure/presentation/providers/usuario_provider.dart';
 
 class NotaFiscal extends StatelessWidget {
-  const NotaFiscal({super.key});
+  final List<Produto> carrinho; // itens no momento da compra
+
+  const NotaFiscal({super.key, required this.carrinho});
 
   @override
   Widget build(BuildContext context) {
-    final usuario = context.read<UsuarioProvider>().usuario;
-    final carrinho = context.watch<CarrinhoProvider>().carrinho;
-    final soma = context.watch<CarrinhoProvider>().somaTotal;
+    final usuario = context.watch<UsuarioProvider>().usuario;
+    final soma = carrinho.fold<double>(0, (total, item) => total + item.preco * item.quantidade);
 
     return AlertDialog(
       title: const Text("Nota Fiscal"),
-      content: Column(
+      content: SingleChildScrollView(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Nome: ${usuario!.nome}"),
-            Text("CPF: ${usuario.cpf}"),
+            Text("Nome: ${usuario?.nome}"),
+            Text("CPF: ${usuario?.cpf}"),
             const SizedBox(height: 10),
             const Text("Lista de Produtos:"),
             const SizedBox(height: 5),
             SizedBox(
-              height: 200,
+              height: carrinho.length * 20,
               child: ListView.builder(
-                shrinkWrap: true,
                 itemCount: carrinho.length,
                 itemBuilder: (context, index) {
-                  final car = carrinho[index];
-                  return Text(car.nome);
+                  final produto = carrinho[index];
+                  return Text(
+                    "${produto.nome} x${produto.quantidade} - R\$ ${produto.preco * produto.quantidade}",
+                  );
                 },
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text("Total: R\$ $soma"),
           ],
         ),
+      ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(), 
+          onPressed: () => Navigator.of(context).pop(),
           child: const Text("Fechar"),
         ),
       ],

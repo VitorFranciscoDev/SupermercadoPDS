@@ -4,6 +4,7 @@ import 'package:supermercado/entities/enum_tipo_usuario.dart';
 import 'package:supermercado/infrastructure/presentation/components/excluir_item_dialog.dart';
 import 'package:supermercado/infrastructure/presentation/carrinho/carrinho_screen.dart';
 import 'package:supermercado/infrastructure/presentation/detalhes-produto/detalhes_produto_screen.dart';
+import 'package:supermercado/infrastructure/presentation/login/login_screen.dart';
 import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
 import 'package:supermercado/infrastructure/presentation/providers/usuario_provider.dart';
 
@@ -32,11 +33,23 @@ class _ListaProdutosScreenState extends State<ListaProdutosScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: tipo == TipoUsuario.usuario
+      ? AppBar(
+        backgroundColor: Colors.black,
+        title: const Text("Produtos", style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white,),
+          onPressed: () {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen())); 
+          },
+        ),
+      ) : null,
       body: Center(
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.only(top: 100),
+              padding: EdgeInsets.only(top: 30),
               child: const Text("Produtos Disponíveis", 
                 style: TextStyle(
                   fontSize: 30,

@@ -27,7 +27,7 @@ class ProdutoRepository {
       where: 'id = ?',
       whereArgs: [produto.id],
     );
-  }
+  } 
 
   // função para listar os produtos
   Future<List<Produto>> listarProdutos() async {

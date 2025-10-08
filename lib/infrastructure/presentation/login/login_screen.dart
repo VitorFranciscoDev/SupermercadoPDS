@@ -43,23 +43,26 @@ class _LoginScreenState extends State<LoginScreen> {
       final resultado = await usuarioUseCase.fazerLogin(controllerNome.text, controllerCPF.text);
 
       if(resultado!=null) {
-        // mensagem na tela
         showDialog(
           context: context, 
           builder: (context) => AlertDialog(
-            title: const Text("Login realizado com sucesso"),
+            title: const Text("Bem vindo de volta!"),
             actions: [
               TextButton(
                 onPressed: () {
-                  context.read<UsuarioProvider>().registrarUsuario(resultado);
                   Navigator.of(context).pop();
-                  resultado.tipo==TipoUsuario.usuario ?
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ListaProdutosScreen())) :
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomeAdminScreen()));
-                },
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+                }, 
                 child: const Text("Fechar"),
               ),
             ],
+          ),
+        );
+        context.read<UsuarioProvider>().registrarUsuario(resultado);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => 
+          resultado.tipo == TipoUsuario.usuario
+            ? ListaProdutosScreen()
+            : HomeAdminScreen(),
           ),
         );
       } else {

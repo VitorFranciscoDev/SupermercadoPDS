@@ -56,11 +56,11 @@ class ProdutoUseCase implements IProdutoUseCase {
   }
 
   @override
-  Future<bool> editarProduto(String nome, double preco, int quantidade) async {
-    Produto produto = Produto(nome: nome, preco: preco, quantidade: quantidade);
+  Future<bool> editarProduto(Produto produto, String nome, double preco, int quantidade) async {
+    Produto produtoEditado = Produto(id: produto.id, nome: nome, preco: preco, quantidade: quantidade);
     
     try {
-      final result = await produtoRepository.editarProduto(produto);
+      final result = await produtoRepository.editarProduto(produtoEditado);
 
       return result > 0;
     } catch (e) {

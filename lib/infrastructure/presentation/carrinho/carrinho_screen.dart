@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supermercado/entities/produto.dart';
 import 'package:supermercado/infrastructure/presentation/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/components/nota_fiscal.dart';
 import 'package:supermercado/infrastructure/presentation/providers/carrinho_provider.dart';
@@ -18,17 +19,32 @@ class _CarrinhoScreenState extends State<CarrinhoScreen> {
   final ProdutoUseCase produtoUseCase = ProdutoUseCase(produtoRepository: ProdutoRepository());
 
   Future<void> comprarItens() async {
-    final carrinho = context.read<CarrinhoProvider>().carrinho;
+    final carrinhoProvider = context.read<CarrinhoProvider>();
+    
+    final List<Produto> carrinhoAtual = List<Produto>.from(
+      carrinhoProvider.carrinho,
+    );
 
-    for (final car in carrinho) {
+    if (carrinhoAtual.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Carrinho vazio!")),
+      );
+      return;
+    }
+
+    // nota fiscal
+    await showDialog(
+      context: context,
+      builder: (context) => NotaFiscal(carrinho: carrinhoAtual),
+    );
+
+    // atualiza a quantidade
+    for (final car in carrinhoAtual) {
       await produtoUseCase.atualizarQuantidade(car, car.quantidade);
     }
 
-    setState(() {
-      context.read<CarrinhoProvider>().limparCarrinho();
-    });
-
-    showDialog(context: context, builder: (context) => NotaFiscal());
+    // limpa o carrinho
+    carrinhoProvider.limparCarrinho();
   }
 
   @override

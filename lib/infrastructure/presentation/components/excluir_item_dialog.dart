@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:supermercado/entities/produto.dart';
+import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
 import 'package:supermercado/modules/produto/produto_repository.dart';
 import 'package:supermercado/modules/produto/produto_usecase.dart';
 
@@ -25,12 +27,11 @@ class _ExcluirItemDialogState extends State<ExcluirItemDialog> {
           child: const Text("Cancelar"),
         ),
         TextButton(
-          onPressed: () {
-            setState(() {
-              // remove o produto
-              produtoUseCase.excluirProduto(widget.produto);
-              Navigator.of(context).pop();
-            });
+          onPressed: () async {
+            // remove o produto
+            await produtoUseCase.excluirProduto(widget.produto);
+            Navigator.of(context).pop();
+            context.read<ProdutoProvider>().carregarProdutos();
           }, 
           child: const Text("Remover"),
         ),

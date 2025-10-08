@@ -15,6 +15,29 @@ class DetalhesProdutoScreen extends StatefulWidget {
 }
 
 class _DetalhesProdutoScreenState extends State<DetalhesProdutoScreen> {
+  late Produto produto;
+
+  @override
+  void initState() {
+    super.initState();
+    produto = widget.produto;
+  }
+
+  Future<void> irParaEdicao() async {
+    final produtoEditado = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => EditarProdutoAdminScreen(produto: produto),
+      ),
+    );
+
+    if (produtoEditado != null) {
+      setState(() {
+        produto = produtoEditado;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // variável que recebe o tipo do usuário do provider
@@ -49,7 +72,7 @@ class _DetalhesProdutoScreenState extends State<DetalhesProdutoScreen> {
                   children: [
                     Padding(
                       padding: EdgeInsets.only(top: 30),
-                      child: Text("Nome: ${widget.produto.nome}", 
+                      child: Text("Nome: ${produto.nome}", 
                         style: TextStyle(
                           fontSize: 20,
                         ),
@@ -57,7 +80,7 @@ class _DetalhesProdutoScreenState extends State<DetalhesProdutoScreen> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 20),
-                      child: Text("Quantidade: ${widget.produto.quantidade.toString()}", 
+                      child: Text("Preço: ${produto.preco.toString()}", 
                         style: TextStyle(
                           fontSize: 20,
                         ),
@@ -65,7 +88,7 @@ class _DetalhesProdutoScreenState extends State<DetalhesProdutoScreen> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 20, bottom: 30),
-                      child: Text("Preço: ${widget.produto.preco.toString()}", 
+                      child: Text("Quantidade: ${produto.quantidade.toString()}", 
                         style: TextStyle(
                           fontSize: 20,
                         ),
@@ -81,11 +104,11 @@ class _DetalhesProdutoScreenState extends State<DetalhesProdutoScreen> {
       floatingActionButton: tipo == TipoUsuario.admin
         ? FloatingActionButton(
         backgroundColor: Colors.white,
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => EditarProdutoAdminScreen(produto: widget.produto))),
+        onPressed: () => irParaEdicao(),
         child: Icon(Icons.edit, color: Colors.black),
       ) : FloatingActionButton(
         backgroundColor: Colors.white,
-        onPressed: () => showDialog(context: context, builder: (context) => AdicionarCarrinhoDialog(produto: widget.produto)),
+        onPressed: () => showDialog(context: context, builder: (context) => AdicionarCarrinhoDialog(produto: produto)),
         child: Icon(Icons.add, color: Colors.black),
       ),
     );

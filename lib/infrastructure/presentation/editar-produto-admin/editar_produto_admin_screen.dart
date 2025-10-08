@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:supermercado/entities/produto.dart';
 import 'package:supermercado/infrastructure/presentation/components/button_component.dart';
 import 'package:supermercado/infrastructure/presentation/components/text_field_component.dart';
+import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
 import 'package:supermercado/modules/produto/produto_repository.dart';
 import 'package:supermercado/modules/produto/produto_usecase.dart';
 
@@ -48,23 +50,17 @@ class _EditarProdutoAdminScreenState extends State<EditarProdutoAdminScreen> {
 
     // se não houver erros, tenta editar o produto
     if(erroNome==null && erroPreco==null && erroQuantidade==null) {
-      final resultado = await produtoUseCase.editarProduto(controllerNome.text, double.parse(controllerPreco.text), int.parse(controllerQuantidade.text));
+      final resultado = await produtoUseCase.editarProduto(widget.produto, controllerNome.text, double.parse(controllerPreco.text), int.parse(controllerQuantidade.text));
 
       if(resultado) {
-        // mensagem na tela
-        showDialog(
-          context: context, builder: (context) {
-            return AlertDialog(
-              title: const Text("Produto Editado"),
-              actions: [
-                TextButton(
-                  onPressed: Navigator.of(context).pop, 
-                  child: const Text("Fechar"),
-                ),
-              ],
-            );
-          }
+        Produto produtoAtualizado = Produto(
+          id: widget.produto.id,
+          nome: controllerNome.text,
+          preco: double.parse(controllerPreco.text),
+          quantidade: int.parse(controllerQuantidade.text),
         );
+        Navigator.of(context).pop(produtoAtualizado);          
+        context.read<ProdutoProvider>().carregarProdutos();
       } else {
         // mensagem na tela
         showDialog(

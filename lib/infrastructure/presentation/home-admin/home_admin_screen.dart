@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supermercado/infrastructure/presentation/cadastro-produto-admin/cadastro_produto_admin_screen.dart';
 import 'package:supermercado/infrastructure/presentation/lista-produtos/lista_produtos_screen.dart';
+import 'package:supermercado/infrastructure/presentation/login/login_screen.dart';
 
 class HomeAdminScreen extends StatelessWidget {
   const HomeAdminScreen({super.key});
@@ -9,11 +10,22 @@ class HomeAdminScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: const Text("Produtos", style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white,),
+          onPressed: () {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen())); 
+          },
+        ),
+      ),
       body: Center(
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.only(top: 100),
+              padding: EdgeInsets.only(top: 30),
               child: const Text("Tela Inicial", 
                 style: TextStyle(
                   fontSize: 30,

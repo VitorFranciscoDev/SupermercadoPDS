@@ -1,34 +1,44 @@
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:supermercado/entities/produto.dart';
+import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
 
 class CarrinhoProvider with ChangeNotifier {
+  final ProdutoProvider produtoProvider;
   List<Produto> carrinho = [];
-  double soma = 0;
 
-  void adicionarItem(Produto novoProduto, int quantidade) {
-    final index = carrinho.indexWhere((p) => p.nome == novoProduto.nome);
+  CarrinhoProvider({required this.produtoProvider});
+
+  // função para adicionar item no carrinho
+  void adicionarItem(BuildContext context, Produto novoProduto, int quantidade) {
+    final index = carrinho.indexWhere((p) => p.id == novoProduto.id);
     if (index >= 0) {
-      Produto atualizado = Produto(
+      carrinho[index] = Produto(
+        id: carrinho[index].id,
         nome: carrinho[index].nome,
         preco: carrinho[index].preco,
         quantidade: carrinho[index].quantidade + quantidade,
       );
-      carrinho[index] = atualizado;
     } else {
       carrinho.add(
-        Produto(nome: novoProduto.nome, preco: novoProduto.preco, quantidade: quantidade),
+        Produto(
+          id: novoProduto.id,
+          nome: novoProduto.nome,
+          preco: novoProduto.preco,
+          quantidade: quantidade,
+        ),
       );
     }
+
+    // Pega o provider correto
+    context.read<ProdutoProvider>().diminuirEstoque(novoProduto, quantidade);
+
     notifyListeners();
   }
 
+  // limpa o carrinho
   void limparCarrinho() {
     carrinho.clear();
     notifyListeners();
   }
-
-  double get somaTotal {
-    return carrinho.fold(0, (total, car) => total + car.preco * car.quantidade);
-  }
-
 }
