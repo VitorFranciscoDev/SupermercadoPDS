@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:supermercado/infrastructure/presentation/providers/produto_provider.dart';
-import 'package:supermercado/infrastructure/presentation/providers/carrinho_provider.dart';
-import 'package:supermercado/infrastructure/presentation/login/login_screen.dart';
-import 'package:supermercado/infrastructure/presentation/providers/usuario_provider.dart';
+import 'package:supermercado/controller/produto_controller.dart';
+import 'package:supermercado/controller/carrinho_controller.dart';
+import 'package:supermercado/view/login_screen.dart';
+import 'package:supermercado/controller/usuario_controller.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => UsuarioProvider()),
-        ChangeNotifierProvider(create: (context) => ProdutoProvider()),
-        ChangeNotifierProvider(create: (context) => CarrinhoProvider(produtoProvider: context.read<ProdutoProvider>())),
+        ChangeNotifierProvider(create: (context) => UsuarioController()),
+        ChangeNotifierProvider(create: (context) => ProdutoController()),
+        ChangeNotifierProvider(create: (context) => CarrinhoController(produtoController: context.read<ProdutoController>())),
       ],
       child: const MyApp(),
     ),
