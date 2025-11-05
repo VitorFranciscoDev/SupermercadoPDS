@@ -11,7 +11,7 @@ class User {
       'id': id,
       'name': name,
       'cpf': cpf,
-      'isAdmin': isAdmin,
+      'isAdmin': isAdmin ? 1 : 0,
     };
   }
 
@@ -20,7 +20,7 @@ class User {
       id: map['id'],
       name: map['name'], 
       cpf: map['cpf'], 
-      isAdmin: map['isAdmin'],
+      isAdmin: map['isAdmin'] == 1,
     );
   }
 }
