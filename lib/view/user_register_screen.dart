@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:supermercado/controller/auth_controller.dart';
+import 'package:supermercado/model/user.dart';
+import 'package:supermercado/view/login_screen.dart';
 
 class UserRegisterScreen extends StatefulWidget {
   const UserRegisterScreen({super.key});
@@ -14,7 +18,74 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
   bool isAdmin = false;
 
   Future<void> addUser() async {
+    final provider = context.watch<AuthController>();
 
+    final isValid = provider.validateFields(_controllerName.text, _controllerCPF.text);
+
+    if(!isValid) return;
+
+    final user = User(name: _controllerName.text, cpf: _controllerCPF.text, isAdmin: isAdmin);
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      final result = await provider.addUser(user);
+
+      Navigator.of(context).pop();
+
+      if(result == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check, color: Color(0xFF2E7D32)),
+                SizedBox(width: 8),
+                Text("Cadastro Feito Com Sucesso!"),
+              ],
+            ),
+            backgroundColor: Colors.white,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check, color: Colors.red),
+                SizedBox(width: 8),
+                Text(result),
+              ],
+            ),
+            backgroundColor: Colors.white,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        );
+      }
+    } catch(e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check, color: Colors.red),
+              SizedBox(width: 8),
+              Text("Erro Inesperado no Cadastro!"),
+            ],
+          ),
+          backgroundColor: Colors.white,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      );
+    }
   }
 
   @override
@@ -251,7 +322,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                         shadowColor: Color(0xFF2E7D32).withOpacity(0.5),
                       ),
                       child: const Text(
-                        "Entrar",
+                        "Cadastrar",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -288,13 +359,13 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                     ),
                     const SizedBox(height: 10),
                     TextButton(
-                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UserRegisterScreen()),
+                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()),
                       ), 
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: 15),
                       ),
                       child: Text(
-                        "Clique aqui para fazer seu cadastro!",
+                        "Clique aqui para fazer seu Login!",
                         style: TextStyle(
                           color: Color(0xFF2E7D32),
                           fontWeight: FontWeight.w600,

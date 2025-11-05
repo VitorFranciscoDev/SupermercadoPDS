@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:supermercado/controller/auth_controller.dart';
 import 'package:supermercado/view/user_register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,11 +15,78 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _controllerCPF = TextEditingController();
 
   Future<void> doLogin() async {
+    final provider = context.read<AuthController>();
 
+    final isValid = provider.validateFields(_controllerName.text, _controllerCPF.text);
+
+    if(!isValid) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      final result = await provider.doLogin(_controllerName.text, _controllerCPF.text);
+
+      Navigator.of(context).pop();
+
+      if(result == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check, color: Color(0xFF2E7D32)),
+                SizedBox(width: 8),
+                Text("Login Feito Com Sucesso!"),
+              ],
+            ),
+            backgroundColor: Colors.white,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.error, color: Colors.red),
+                SizedBox(width: 8),
+                Text(result),
+              ],
+            ),
+            backgroundColor: Colors.white,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        );
+      }
+    } catch(e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.error, color: Colors.red),
+              SizedBox(width: 8),
+              Text("Erro Inesperado no Login!"),
+            ],
+          ),
+          backgroundColor: Colors.white,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<AuthController>();
+
     return Scaffold(
       backgroundColor: Color(0xFF2E7D32),
       body: Padding(
@@ -89,6 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       prefixIcon: Icon(Icons.person, color: Color(0xFF2E7D32)),
                       labelText: "Nome",
                       labelStyle: TextStyle(color: Color(0xFF2E7D32)),
+                      errorText: provider.errorName,
                       filled: true,
                       fillColor: Color(0xFFE8F5E9),
                       enabledBorder: OutlineInputBorder(
@@ -139,6 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       prefixIcon: Icon(Icons.badge, color: Color(0xFF2E7D32)),
                       labelText: "CPF",
                       labelStyle: TextStyle(color: Color(0xFF2E7D32)),
+                      errorText: provider.errorCPF,
                       filled: true,
                       fillColor: Color(0xFFE8F5E9),
                       enabledBorder: OutlineInputBorder(

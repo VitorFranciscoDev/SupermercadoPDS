@@ -24,7 +24,7 @@ class AuthController with ChangeNotifier {
   String? _errorCPF;
 
   String? get errorName => _errorName;
-  String? get errorEmail => _errorCPF;
+  String? get errorCPF => _errorCPF;
 
   bool validateFields(String name, String cpf) {
     if(name.isEmpty) {
