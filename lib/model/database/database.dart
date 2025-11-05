@@ -1,7 +1,7 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:supermercado/database/products_table.dart';
-import 'package:supermercado/database/users_table.dart';
+import 'package:supermercado/model/database/products_table.dart';
+import 'package:supermercado/model/database/users_table.dart';
 
 // Creation of DB and Tables
 class SupermercadoDatabase {

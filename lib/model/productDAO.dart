@@ -1,4 +1,4 @@
-import 'package:supermercado/database/database.dart';
+import 'package:supermercado/model/database/database.dart';
 import 'package:supermercado/model/product.dart';
 
 class ProductDAO {
