@@ -11,6 +11,8 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
   final TextEditingController _controllerName = TextEditingController();
   final TextEditingController _controllerCPF = TextEditingController();
 
+  bool isAdmin = false;
+
   Future<void> addUser() async {
 
   }
@@ -18,135 +20,295 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFF2E7D32),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 50),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.shopping_cart, size: 40),
-                const SizedBox(width: 5),
-                const Text("Supermercado",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w500,
-                  ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 20,
+                      offset: Offset(0, 10),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 50),
-            TextField(
-              controller: _controllerName,
-              decoration: InputDecoration(
-                suffixIcon: _controllerName.text.isEmpty
-                  ? null 
-                  : IconButton(
-                    onPressed: () => _controllerName.clear(), 
-                    icon: Icon(Icons.clear),
-                  ),
-                labelText: "Nome",
-                filled: true,
-                fillColor: Colors.grey[200],
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.shopping_cart,
+                      size: 30,
+                      color: Color(0xFF2E7D32),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      "Supermercado",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF2E7D32),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _controllerCPF,
-              decoration: InputDecoration(
-                suffixIcon: _controllerCPF.text.isEmpty
-                  ? null 
-                  : IconButton(
-                    onPressed: () => _controllerName.clear(), 
-                    icon: Icon(Icons.clear),
-                  ),
-                labelText: "CPF",
-                filled: true,
-                fillColor: Colors.grey[200],
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
+              const SizedBox(height: 30),
+              Container(
+                padding: const EdgeInsets.all(30),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 20,
+                      offset: Offset(0, 10),
+                    ),
+                  ],
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _controllerName,
+                      decoration: InputDecoration(
+                        suffixIcon: _controllerName.text.isEmpty
+                          ? null 
+                          : IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _controllerName.clear();
+                              });
+                            }, 
+                            icon: Icon(Icons.clear, color: Color(0xFF2E7D32)),
+                          ),
+                        prefixIcon: Icon(Icons.person, color: Color(0xFF2E7D32)),
+                        labelText: "Nome",
+                        labelStyle: TextStyle(color: Color(0xFF2E7D32)),
+                        filled: true,
+                        fillColor: Color(0xFFE8F5E9),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0xFF81C784),
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0xFF2E7D32),
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _controllerCPF,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        suffixIcon: _controllerCPF.text.isEmpty
+                          ? null 
+                          : IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _controllerCPF.clear();
+                              });
+                            }, 
+                            icon: Icon(Icons.clear, color: Color(0xFF2E7D32)),
+                          ),
+                        prefixIcon: Icon(Icons.badge, color: Color(0xFF2E7D32)),
+                        labelText: "CPF",
+                        labelStyle: TextStyle(color: Color(0xFF2E7D32)),
+                        filled: true,
+                        fillColor: Color(0xFFE8F5E9),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0xFF81C784),
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0xFF2E7D32),
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      padding: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFE8F5E9),
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                          color: Color(0xFF81C784),
+                          width: 2,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Tipo de conta",
+                            style: TextStyle(
+                              color: Color(0xFF2E7D32),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          RadioListTile<bool>(
+                            value: false,
+                            groupValue: isAdmin,
+                            onChanged: (value) {
+                              setState(() {
+                                isAdmin = value!;
+                              });
+                            },
+                            title: Text(
+                              "Cliente",
+                              style: TextStyle(
+                                color: Color(0xFF2E7D32),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            activeColor: Color(0xFF2E7D32),
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                          RadioListTile<bool>(
+                            value: true,
+                            groupValue: isAdmin,
+                            onChanged: (value) {
+                              setState(() {
+                                isAdmin = value!;
+                              });
+                            },
+                            title: Text(
+                              "Admin",
+                              style: TextStyle(
+                                color: Color(0xFF2E7D32),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            activeColor: Color(0xFF2E7D32),
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 25),
+                    ElevatedButton(
+                      onPressed: () => addUser(), 
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(double.infinity, 55),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        backgroundColor: Color(0xFF2E7D32),
+                        elevation: 5,
+                        shadowColor: Color(0xFF2E7D32).withOpacity(0.5),
+                      ),
+                      child: const Text(
+                        "Entrar",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 25),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Divider(
+                            color: Colors.grey[400],
+                            thickness: 1,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Text(
+                          "Ou",
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Expanded(
+                          child: Divider(
+                            color: Colors.grey[400],
+                            thickness: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    TextButton(
+                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UserRegisterScreen()),
+                      ), 
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                      ),
+                      child: Text(
+                        "Clique aqui para fazer seu cadastro!",
+                        style: TextStyle(
+                          color: Color(0xFF2E7D32),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () => addUser(), 
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                backgroundColor: Colors.grey[200]
-              ),
-              child: const Text("Entrar", style: TextStyle(color: Colors.black)),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(child: Divider()),
-                const SizedBox(width: 15),
-                const Text("Ou"),
-                const SizedBox(width: 15),
-                Expanded(child: Divider()),
-              ],
-            ),
-            TextButton(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UserRegisterScreen())), 
-              child: const Text("Clique aqui para fazer seu cadastro!", style: TextStyle(color: Colors.black)),
-            ),
-          ],
+              const SizedBox(height: 30),
+            ],
+          ),
         ),
       ),
     );

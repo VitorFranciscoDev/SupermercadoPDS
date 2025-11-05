@@ -19,129 +19,225 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFF2E7D32),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 50),
+        padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.shopping_cart, size: 40),
-                const SizedBox(width: 5),
-                const Text("Supermercado",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w500,
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 20,
+                    offset: Offset(0, 10),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 50),
-            TextField(
-              controller: _controllerName,
-              decoration: InputDecoration(
-                suffixIcon: _controllerName.text.isEmpty
-                  ? null 
-                  : IconButton(
-                    onPressed: () => _controllerName.clear(), 
-                    icon: Icon(Icons.clear),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.shopping_cart,
+                    size: 30,
+                    color: Color(0xFF2E7D32),
                   ),
-                labelText: "Nome",
-                filled: true,
-                fillColor: Colors.grey[200],
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0,
+                  const SizedBox(width: 10),
+                  Text(
+                    "Supermercado",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF2E7D32),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                ],
               ),
             ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _controllerCPF,
-              decoration: InputDecoration(
-                suffixIcon: _controllerCPF.text.isEmpty
-                  ? null 
-                  : IconButton(
-                    onPressed: () => _controllerName.clear(), 
-                    icon: Icon(Icons.clear),
+            const SizedBox(height: 30),
+            Container(
+              padding: const EdgeInsets.all(30),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 20,
+                    offset: Offset(0, 10),
                   ),
-                labelText: "CPF",
-                filled: true,
-                fillColor: Colors.grey[200],
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                ],
               ),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () => doLogin(), 
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                backgroundColor: Colors.grey[200]
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _controllerName,
+                    decoration: InputDecoration(
+                      suffixIcon: _controllerName.text.isEmpty
+                        ? null 
+                        : IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _controllerName.clear();
+                            });
+                          }, 
+                          icon: Icon(Icons.clear, color: Color(0xFF2E7D32)),
+                        ),
+                      prefixIcon: Icon(Icons.person, color: Color(0xFF2E7D32)),
+                      labelText: "Nome",
+                      labelStyle: TextStyle(color: Color(0xFF2E7D32)),
+                      filled: true,
+                      fillColor: Color(0xFFE8F5E9),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xFF81C784),
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xFF2E7D32),
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.red,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.red,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _controllerCPF,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      suffixIcon: _controllerCPF.text.isEmpty
+                        ? null 
+                        : IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _controllerCPF.clear();
+                            });
+                          }, 
+                          icon: Icon(Icons.clear, color: Color(0xFF2E7D32)),
+                        ),
+                      prefixIcon: Icon(Icons.badge, color: Color(0xFF2E7D32)),
+                      labelText: "CPF",
+                      labelStyle: TextStyle(color: Color(0xFF2E7D32)),
+                      filled: true,
+                      fillColor: Color(0xFFE8F5E9),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xFF81C784),
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xFF2E7D32),
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.red,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.red,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                  ElevatedButton(
+                    onPressed: () => doLogin(), 
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(double.infinity, 55),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      backgroundColor: Color(0xFF2E7D32),
+                      elevation: 5,
+                      shadowColor: Color(0xFF2E7D32).withOpacity(0.5),
+                    ),
+                    child: const Text(
+                      "Entrar",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          color: Colors.grey[400],
+                          thickness: 1,
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Text(
+                        "Ou",
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: Divider(
+                          color: Colors.grey[400],
+                          thickness: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  TextButton(
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UserRegisterScreen()),
+                    ), 
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 15),
+                    ),
+                    child: Text(
+                      "Clique aqui para fazer seu cadastro!",
+                      style: TextStyle(
+                        color: Color(0xFF2E7D32),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
               ),
-              child: const Text("Entrar", style: TextStyle(color: Colors.black)),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(child: Divider()),
-                const SizedBox(width: 15),
-                const Text("Ou"),
-                const SizedBox(width: 15),
-                Expanded(child: Divider()),
-              ],
-            ),
-            TextButton(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UserRegisterScreen())), 
-              child: const Text("Clique aqui para fazer seu cadastro!", style: TextStyle(color: Colors.black)),
             ),
           ],
         ),
