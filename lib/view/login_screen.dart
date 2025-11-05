@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supermercado/controller/auth_controller.dart';
+import 'package:supermercado/view/bottom_navigator.dart';
 import 'package:supermercado/view/user_register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -49,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
         );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BottomNavigator()));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

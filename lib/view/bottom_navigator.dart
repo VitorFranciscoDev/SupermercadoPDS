@@ -5,8 +5,8 @@ import 'package:supermercado/view/cart_screen.dart';
 import 'package:supermercado/view/home_screen.dart';
 import 'package:supermercado/view/products_screen.dart';
 
-class BottomNavigatorScreen extends StatelessWidget {
-  BottomNavigatorScreen({super.key});
+class BottomNavigator extends StatelessWidget {
+  BottomNavigator({super.key});
 
   final List<Widget> _pages = [
     HomeScreen(),
@@ -16,7 +16,7 @@ class BottomNavigatorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final index = context.watch<BottomNavigatorProvider>().index;
+    final index = context.watch<BottomNavigatorController>().index;
 
     return Scaffold(
       backgroundColor: Color(0xFF2E7D32),
@@ -44,7 +44,7 @@ class BottomNavigatorScreen extends StatelessWidget {
             unselectedItemColor: Colors.green,
             selectedFontSize: 12,
             unselectedFontSize: 11,
-            onTap: (newIndex) => context.read<BottomNavigatorProvider>().index = newIndex,
+            onTap: (newIndex) => context.read<BottomNavigatorController>().index = newIndex,
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home_outlined, size: 26),

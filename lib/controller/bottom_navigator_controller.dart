@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class BottomNavigatorProvider with ChangeNotifier {
+class BottomNavigatorController with ChangeNotifier {
   int _index = 0;
 
   int get index => _index;
