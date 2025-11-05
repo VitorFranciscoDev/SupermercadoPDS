@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Icon(Icons.check, color: Color(0xFF2E7D32)),
                 SizedBox(width: 8),
-                Text("Login Feito Com Sucesso!"),
+                Text("Login Feito Com Sucesso!", style: TextStyle(color: Colors.black)),
               ],
             ),
             backgroundColor: Colors.white,
@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Icon(Icons.error, color: Colors.red),
                 SizedBox(width: 8),
-                Text(result),
+                Text(result, style: TextStyle(color: Colors.black)),
               ],
             ),
             backgroundColor: Colors.white,
@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Icon(Icons.error, color: Colors.red),
               SizedBox(width: 8),
-              Text("Erro Inesperado no Login!"),
+              Text("Erro Inesperado no Login!", style: TextStyle(color: Colors.black)),
             ],
           ),
           backgroundColor: Colors.white,

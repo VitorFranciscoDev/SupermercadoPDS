@@ -18,7 +18,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
   bool isAdmin = false;
 
   Future<void> addUser() async {
-    final provider = context.watch<AuthController>();
+    final provider = context.read<AuthController>();
 
     final isValid = provider.validateFields(_controllerName.text, _controllerCPF.text);
 
@@ -46,7 +46,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
               children: [
                 Icon(Icons.check, color: Color(0xFF2E7D32)),
                 SizedBox(width: 8),
-                Text("Cadastro Feito Com Sucesso!"),
+                Text("Cadastro Feito Com Sucesso!", style: TextStyle(color: Colors.black)),
               ],
             ),
             backgroundColor: Colors.white,
@@ -61,7 +61,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
               children: [
                 Icon(Icons.check, color: Colors.red),
                 SizedBox(width: 8),
-                Text(result),
+                Text(result, style: TextStyle(color: Colors.black)),
               ],
             ),
             backgroundColor: Colors.white,
@@ -77,7 +77,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
             children: [
               Icon(Icons.check, color: Colors.red),
               SizedBox(width: 8),
-              Text("Erro Inesperado no Cadastro!"),
+              Text("Erro Inesperado no Cadastro!", style: TextStyle(color: Colors.black)),
             ],
           ),
           backgroundColor: Colors.white,
@@ -90,6 +90,8 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<AuthController>();
+
     return Scaffold(
       backgroundColor: Color(0xFF2E7D32),
       appBar: AppBar(
@@ -165,6 +167,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                         prefixIcon: Icon(Icons.person, color: Color(0xFF2E7D32)),
                         labelText: "Nome",
                         labelStyle: TextStyle(color: Color(0xFF2E7D32)),
+                        errorText: provider.errorName,
                         filled: true,
                         fillColor: Color(0xFFE8F5E9),
                         enabledBorder: OutlineInputBorder(
@@ -215,6 +218,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                         prefixIcon: Icon(Icons.badge, color: Color(0xFF2E7D32)),
                         labelText: "CPF",
                         labelStyle: TextStyle(color: Color(0xFF2E7D32)),
+                        errorText: provider.errorCPF,
                         filled: true,
                         fillColor: Color(0xFFE8F5E9),
                         enabledBorder: OutlineInputBorder(
