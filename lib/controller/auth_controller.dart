@@ -5,7 +5,9 @@ import 'package:supermercado/model/user.dart';
 import 'package:supermercado/model/userDAO.dart';
 
 class AuthController with ChangeNotifier {
-  AuthController({ required this.userDAO });
+  AuthController({ required this.userDAO }) {
+    loadUser();
+  }
 
   final UserDAO userDAO;
 
