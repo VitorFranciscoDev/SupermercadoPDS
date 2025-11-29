@@ -27,19 +27,8 @@ class AuthController with ChangeNotifier {
   String? get errorCPF => _errorCPF;
 
   bool validateFields(String name, String cpf) {
-    if(name.isEmpty) {
-      _errorName = "Nome não pode ser vazio";
-    } else {
-      _errorName = null;
-    }
-
-    if(cpf.isEmpty) {
-      _errorCPF = "CPF não pode ser vazio";
-    } else if(cpf.length != 11) {
-      _errorCPF = "CPF tem que conter 11 dígitos";
-    } else {
-      _errorCPF = null;
-    }
+    _errorName = userDAO.validateName(name);
+    _errorCPF = userDAO.validateCPF(cpf);
     
     notifyListeners();
     

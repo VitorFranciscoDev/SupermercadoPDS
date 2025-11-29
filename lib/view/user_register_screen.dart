@@ -12,11 +12,41 @@ class UserRegisterScreen extends StatefulWidget {
 }
 
 class _UserRegisterScreenState extends State<UserRegisterScreen> {
+  // Controllers
   final TextEditingController _controllerName = TextEditingController();
   final TextEditingController _controllerCPF = TextEditingController();
 
+  // eh adm? (checkbox)
   bool isAdmin = false;
 
+  // Limpa os Controllers
+  void _clearFields() {
+    setState(() {
+      _controllerName.clear();
+      _controllerCPF.clear();
+      isAdmin = false;
+    });
+  }
+
+  // Feedback na tela
+  void _showSnackBar(bool isError, String title) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(isError ? Icons.error : Icons.check, color: isError ? Colors.red : Color(0xFF2E7D32)),
+            SizedBox(width: 8),
+            Text(title, style: TextStyle(color: Colors.black)),
+          ],
+        ),
+        backgroundColor: Colors.white,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+
+  // Adiciona o Usuário no DB
   Future<void> addUser() async {
     final provider = context.read<AuthController>();
 
@@ -40,51 +70,14 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
       Navigator.of(context).pop();
 
       if(result == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.check, color: Color(0xFF2E7D32)),
-                SizedBox(width: 8),
-                Text("Cadastro Feito Com Sucesso!", style: TextStyle(color: Colors.black)),
-              ],
-            ),
-            backgroundColor: Colors.white,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          ),
-        );
+        _showSnackBar(false, "Cadastro realizado com sucesso.");
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+        _clearFields();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.check, color: Colors.red),
-                SizedBox(width: 8),
-                Text(result, style: TextStyle(color: Colors.black)),
-              ],
-            ),
-            backgroundColor: Colors.white,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          ),
-        );
+        _showSnackBar(true, "Erro no Cadastro.");
       }
     } catch(e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.check, color: Colors.red),
-              SizedBox(width: 8),
-              Text("Erro Inesperado no Cadastro!", style: TextStyle(color: Colors.black)),
-            ],
-          ),
-          backgroundColor: Colors.white,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-      );
+      _showSnackBar(true, "Erro inesperado.");
     }
   }
 
@@ -135,7 +128,9 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                   ],
                 ),
               ),
+
               const SizedBox(height: 30),
+
               Container(
                 padding: const EdgeInsets.all(30),
                 decoration: BoxDecoration(
@@ -200,7 +195,9 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 20),
+
                     TextField(
                       controller: _controllerCPF,
                       keyboardType: TextInputType.number,
@@ -251,7 +248,9 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 20),
+
                     Container(
                       padding: EdgeInsets.all(15),
                       decoration: BoxDecoration(
@@ -313,7 +312,9 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                         ],
                       ),
                     ),
+
                     const SizedBox(height: 25),
+
                     ElevatedButton(
                       onPressed: () => addUser(), 
                       style: ElevatedButton.styleFrom(
@@ -334,7 +335,9 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 25),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -361,10 +364,15 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                         ),
                       ],
                     ),
+
                     const SizedBox(height: 10),
+
                     TextButton(
-                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()),
-                      ), 
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+                        _clearFields();
+                        provider.clearErrors();
+                      },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: 15),
                       ),
@@ -381,6 +389,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                   ],
                 ),
               ),
+              
               const SizedBox(height: 30),
             ],
           ),

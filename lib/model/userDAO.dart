@@ -4,6 +4,20 @@ import 'package:supermercado/model/user.dart';
 class UserDAO {
   final database = SupermercadoDatabase();
 
+  String? validateName(String name) => name.isEmpty ? "Nome não pode ser vazio." : null;
+
+  String? validateCPF(String cpf) {
+    if(cpf.isEmpty) {
+      return "CPF não pode ser vazio";
+    }
+    
+    if(cpf.length != 11) {
+      return "CPF tem que conter 11 dígitos";
+    }
+
+    return null;
+  }
+
   Future<int> addUser(User user) async {
     try {
       final db = await database.database;
