@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:supermercado/controllers/usuario_controller.dart';
-import 'package:supermercado/views/cadastro_produto_view.dart';
-import 'package:supermercado/views/cadastro_usuario_view.dart';
-import 'package:supermercado/views/compra_view.dart';
+import 'package:provider/provider.dart';
+import '../controllers/usuario_controller.dart';
+import '../utils/responsive_helper.dart';
+import 'cadastro_usuario_view.dart';
+import 'cadastro_produto_view.dart';
+import 'compra_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -15,8 +17,6 @@ class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
   final _nomeController = TextEditingController();
   final _cpfController = TextEditingController();
-  final UsuarioController _usuarioController = UsuarioController();
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -28,44 +28,39 @@ class _LoginViewState extends State<LoginView> {
   Future<void> _fazerLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isLoading = true);
+    final controller = Provider.of<UsuarioController>(context, listen: false);
+    
+    final sucesso = await controller.fazerLogin(
+      _nomeController.text,
+      _cpfController.text,
+    );
 
-    try {
-      final usuario = await _usuarioController.fazerLogin(
-        _nomeController.text,
-        _cpfController.text,
-      );
-
-      if (usuario != null && mounted) {
+    if (sucesso && mounted) {
+      final usuario = controller.usuarioLogado;
+      if (usuario != null) {
         if (usuario.isAdministrador) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => CadastroProdutoView(usuario: usuario),
+              builder: (context) => const CadastroProdutoView(),
             ),
           );
         } else {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => CompraView(usuario: usuario),
+              builder: (context) => const CompraView(),
             ),
           );
         }
       }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString().replaceAll('Exception: ', '')),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+    } else if (mounted && controller.mensagemErro != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(controller.mensagemErro!),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -78,6 +73,10 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = ResponsiveHelper.isTablet(context);
+    final cardWidth = ResponsiveHelper.getCardWidth(context);
+    final padding = ResponsiveHelper.getPadding(context);
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -90,96 +89,122 @@ class _LoginViewState extends State<LoginView> {
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
-              child: Card(
-                elevation: 8,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.shopping_cart,
-                          size: 80,
-                          color: Colors.blue.shade700,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Supermercado Manager',
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              padding: padding,
+              child: Center(
+                child: SizedBox(
+                  width: cardWidth,
+                  child: Card(
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Padding(
+                      padding: isTablet 
+                          ? const EdgeInsets.all(48.0) 
+                          : const EdgeInsets.all(32.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.shopping_cart,
+                              size: isTablet ? 100 : 80,
+                              color: Colors.blue.shade700,
+                            ),
+                            SizedBox(height: isTablet ? 24 : 16),
+                            Text(
+                              'Supermercado Manager',
+                              style: TextStyle(
+                                fontSize: ResponsiveHelper.getFontSize(context, 24),
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue.shade700,
                               ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Faça login para continuar',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            ),
+                            SizedBox(height: isTablet ? 12 : 8),
+                            Text(
+                              'Faça login para continuar',
+                              style: TextStyle(
+                                fontSize: ResponsiveHelper.getFontSize(context, 14),
                                 color: Colors.grey.shade600,
                               ),
-                        ),
-                        const SizedBox(height: 32),
-                        TextFormField(
-                          controller: _nomeController,
-                          decoration: const InputDecoration(
-                            labelText: 'Nome',
-                            prefixIcon: Icon(Icons.person),
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Por favor, informe seu nome';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _cpfController,
-                          decoration: const InputDecoration(
-                            labelText: 'CPF',
-                            prefixIcon: Icon(Icons.badge),
-                            border: OutlineInputBorder(),
-                            hintText: '000.000.000-00',
-                          ),
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Por favor, informe seu CPF';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 24),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: _isLoading ? null : _fazerLogin,
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                            ),
+                            SizedBox(height: isTablet ? 40 : 32),
+                            TextFormField(
+                              controller: _nomeController,
+                              style: TextStyle(
+                                fontSize: ResponsiveHelper.getFontSize(context, 16),
+                              ),
+                              decoration: const InputDecoration(
+                                labelText: 'Nome',
+                                prefixIcon: Icon(Icons.person),
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Por favor, informe seu nome';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: isTablet ? 20 : 16),
+                            TextFormField(
+                              controller: _cpfController,
+                              style: TextStyle(
+                                fontSize: ResponsiveHelper.getFontSize(context, 16),
+                              ),
+                              decoration: const InputDecoration(
+                                labelText: 'CPF',
+                                prefixIcon: Icon(Icons.badge),
+                                border: OutlineInputBorder(),
+                                hintText: '000.000.000-00',
+                              ),
+                              keyboardType: TextInputType.number,
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Por favor, informe seu CPF';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: isTablet ? 32 : 24),
+                            Consumer<UsuarioController>(
+                              builder: (context, controller, child) {
+                                return SizedBox(
+                                  width: double.infinity,
+                                  height: isTablet ? 56 : 50,
+                                  child: ElevatedButton(
+                                    onPressed: controller.isLoading ? null : _fazerLogin,
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    child: controller.isLoading
+                                        ? const CircularProgressIndicator(color: Colors.white)
+                                        : Text(
+                                            'ENTRAR',
+                                            style: TextStyle(
+                                              fontSize: ResponsiveHelper.getFontSize(context, 16),
+                                            ),
+                                          ),
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(height: isTablet ? 20 : 16),
+                            TextButton(
+                              onPressed: _irParaCadastro,
+                              child: Text(
+                                'Não tem conta? Cadastre-se',
+                                style: TextStyle(
+                                  fontSize: ResponsiveHelper.getFontSize(context, 14),
+                                ),
                               ),
                             ),
-                            child: _isLoading
-                                ? const CircularProgressIndicator(color: Colors.white)
-                                : const Text(
-                                    'ENTRAR',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                          ),
+                          ],
                         ),
-                        const SizedBox(height: 16),
-                        TextButton(
-                          onPressed: _irParaCadastro,
-                          child: const Text('Não tem conta? Cadastre-se'),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),

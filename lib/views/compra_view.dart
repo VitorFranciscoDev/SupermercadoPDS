@@ -1,72 +1,75 @@
 import 'package:flutter/material.dart';
-import '../models/usuario.dart';
-import '../models/produto.dart';
+import 'package:provider/provider.dart';
+import '../controllers/usuario_controller.dart';
 import '../controllers/produto_controller.dart';
 import '../controllers/carrinho_controller.dart';
+import '../models/produto.dart';
+import '../utils/responsive_helper.dart';
 import 'login_view.dart';
 
 class CompraView extends StatefulWidget {
-  final Usuario usuario;
-
-  const CompraView({super.key, required this.usuario});
+  const CompraView({super.key});
 
   @override
   State<CompraView> createState() => _CompraViewState();
 }
 
 class _CompraViewState extends State<CompraView> {
-  final ProdutoController _produtoController = ProdutoController();
-  final CarrinhoController _carrinhoController = CarrinhoController();
-  List<Produto> _produtos = [];
-  bool _isLoading = false;
-
   @override
   void initState() {
     super.initState();
-    _carregarProdutos();
-  }
-
-  Future<void> _carregarProdutos() async {
-    setState(() => _isLoading = true);
-    try {
-      final produtos = await _produtoController.listarProdutos();
-      setState(() => _produtos = produtos);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao carregar produtos: $e')),
-        );
-      }
-    } finally {
-      setState(() => _isLoading = false);
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ProdutoController>(context, listen: false).carregarProdutos();
+    });
   }
 
   void _mostrarDetalhesProduto(Produto produto) {
+    final isTablet = ResponsiveHelper.isTablet(context);
+    final produtoController = Provider.of<ProdutoController>(context, listen: false);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(produto.nome),
+        title: Text(
+          produto.nome,
+          style: TextStyle(
+            fontSize: ResponsiveHelper.getFontSize(context, 20),
+          ),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Descrição:',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text(produto.descricao),
-            const SizedBox(height: 12),
-            Text(
-              'Preço: ${_produtoController.formatarPreco(produto.preco)}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 18,
+                fontSize: ResponsiveHelper.getFontSize(context, 15),
+              ),
+            ),
+            SizedBox(height: isTablet ? 6 : 4),
+            Text(
+              produto.descricao,
+              style: TextStyle(
+                fontSize: ResponsiveHelper.getFontSize(context, 14),
+              ),
+            ),
+            SizedBox(height: isTablet ? 16 : 12),
+            Text(
+              'Preço: ${produtoController.formatarPreco(produto.preco)}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: ResponsiveHelper.getFontSize(context, 18),
                 color: Colors.green,
               ),
             ),
-            const SizedBox(height: 8),
-            Text('Estoque disponível: ${produto.quantidadeEstoque} unidades'),
+            SizedBox(height: isTablet ? 10 : 8),
+            Text(
+              'Estoque disponível: ${produto.quantidadeEstoque} unidades',
+              style: TextStyle(
+                fontSize: ResponsiveHelper.getFontSize(context, 14),
+              ),
+            ),
           ],
         ),
         actions: [
@@ -101,7 +104,7 @@ class _CompraViewState extends State<CompraView> {
     
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Text('Adicionar ${produto.nome}'),
         content: TextField(
           controller: quantidadeController,
@@ -111,10 +114,11 @@ class _CompraViewState extends State<CompraView> {
             hintText: 'Máx: ${produto.quantidadeEstoque}',
           ),
           keyboardType: TextInputType.number,
+          autofocus: true,
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('CANCELAR'),
           ),
           ElevatedButton(
@@ -130,20 +134,22 @@ class _CompraViewState extends State<CompraView> {
                 return;
               }
 
-              try {
-                _carrinhoController.adicionarAoCarrinho(produto, quantidade);
-                Navigator.pop(context);
-                setState(() {});
+              final carrinhoController = Provider.of<CarrinhoController>(context, listen: false);
+              final sucesso = carrinhoController.adicionarProduto(produto, quantidade);
+              
+              Navigator.pop(dialogContext);
+              
+              if (sucesso) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Produto adicionado ao carrinho!'),
                     backgroundColor: Colors.green,
                   ),
                 );
-              } catch (e) {
+              } else if (carrinhoController.mensagemErro != null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(e.toString().replaceAll('Exception: ', '')),
+                    content: Text(carrinhoController.mensagemErro!),
                     backgroundColor: Colors.red,
                   ),
                 );
@@ -157,184 +163,213 @@ class _CompraViewState extends State<CompraView> {
   }
 
   void _visualizarCarrinho() {
+    final isTablet = ResponsiveHelper.isTablet(context);
+    
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) => Container(
-          height: MediaQuery.of(context).size.height * 0.75,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Carrinho de Compras',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Consumer2<CarrinhoController, ProdutoController>(
+        builder: (context, carrinhoController, produtoController, child) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.75,
+            padding: ResponsiveHelper.getPadding(context),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Carrinho de Compras',
+                      style: TextStyle(
+                        fontSize: ResponsiveHelper.getFontSize(context, 20),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-              const Divider(),
-              Expanded(
-                child: _carrinhoController.carrinhoVazio
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.shopping_cart_outlined,
-                              size: 80,
-                              color: Colors.grey.shade400,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Carrinho vazio',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey.shade600,
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+                const Divider(),
+                Expanded(
+                  child: carrinhoController.carrinhoVazio
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.shopping_cart_outlined,
+                                size: isTablet ? 100 : 80,
+                                color: Colors.grey.shade400,
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: _carrinhoController.itens.length,
-                        itemBuilder: (context, index) {
-                          final item = _carrinhoController.itens[index];
-                          return Card(
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                child: Text('${item.quantidade}x'),
+                              SizedBox(height: isTablet ? 20 : 16),
+                              Text(
+                                'Carrinho vazio',
+                                style: TextStyle(
+                                  fontSize: ResponsiveHelper.getFontSize(context, 18),
+                                  color: Colors.grey.shade600,
+                                ),
                               ),
-                              title: Text(item.produto.nome),
-                              subtitle: Text(
-                                '${_produtoController.formatarPreco(item.produto.preco)} x ${item.quantidade} = ${_produtoController.formatarPreco(item.subtotal)}',
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.remove_circle_outline),
-                                    onPressed: () {
-                                      try {
-                                        _carrinhoController.atualizarQuantidade(
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: carrinhoController.itens.length,
+                          itemBuilder: (context, index) {
+                            final item = carrinhoController.itens[index];
+                            return Card(
+                              child: ListTile(
+                                contentPadding: EdgeInsets.all(isTablet ? 16 : 12),
+                                leading: CircleAvatar(
+                                  radius: isTablet ? 28 : 24,
+                                  child: Text(
+                                    '${item.quantidade}x',
+                                    style: TextStyle(
+                                      fontSize: ResponsiveHelper.getFontSize(context, 14),
+                                    ),
+                                  ),
+                                ),
+                                title: Text(
+                                  item.produto.nome,
+                                  style: TextStyle(
+                                    fontSize: ResponsiveHelper.getFontSize(context, 16),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  '${produtoController.formatarPreco(item.produto.preco)} x ${item.quantidade} = ${produtoController.formatarPreco(item.subtotal)}',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveHelper.getFontSize(context, 14),
+                                  ),
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.remove_circle_outline,
+                                        size: isTablet ? 26 : 24,
+                                      ),
+                                      onPressed: () {
+                                        carrinhoController.atualizarQuantidade(
                                           item.produto.id!,
                                           item.quantidade - 1,
                                         );
-                                        setModalState(() {});
-                                        setState(() {});
-                                      } catch (e) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text('$e')),
-                                        );
-                                      }
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.add_circle_outline),
-                                    onPressed: () {
-                                      try {
-                                        _carrinhoController.atualizarQuantidade(
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.add_circle_outline,
+                                        size: isTablet ? 26 : 24,
+                                      ),
+                                      onPressed: () {
+                                        final sucesso = carrinhoController.atualizarQuantidade(
                                           item.produto.id!,
                                           item.quantidade + 1,
                                         );
-                                        setModalState(() {});
-                                        setState(() {});
-                                      } catch (e) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              e.toString().replaceAll('Exception: ', ''),
+                                        if (!sucesso && carrinhoController.mensagemErro != null) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(carrinhoController.mensagemErro!),
+                                              backgroundColor: Colors.red,
                                             ),
-                                            backgroundColor: Colors.red,
+                                          );
+                                        }
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                        size: isTablet ? 26 : 24,
+                                      ),
+                                      onPressed: () {
+                                        //carrinhoController.removerDoCarrinho(item.produto.id!);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Item removido do carrinho'),
                                           ),
                                         );
-                                      }
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete, color: Colors.red),
-                                    onPressed: () {
-                                      _carrinhoController.removerDoCarrinho(
-                                        item.produto.id!,
-                                      );
-                                      setModalState(() {});
-                                      setState(() {});
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Item removido do carrinho'),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-              ),
-              if (!_carrinhoController.carrinhoVazio) ...[
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Total:',
+                            );
+                          },
+                        ),
+                ),
+                if (!carrinhoController.carrinhoVazio) ...[
+                  const Divider(),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: isTablet ? 12 : 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Total:',
+                          style: TextStyle(
+                            fontSize: ResponsiveHelper.getFontSize(context, 20),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          produtoController.formatarPreco(carrinhoController.totalGeral),
+                          style: TextStyle(
+                            fontSize: ResponsiveHelper.getFontSize(context, 24),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: isTablet ? 56 : 50,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _finalizarCompra(context),
+                      icon: const Icon(Icons.receipt_long),
+                      label: Text(
+                        'EMITIR NOTA FISCAL',
                         style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                          fontSize: ResponsiveHelper.getFontSize(context, 14),
                         ),
                       ),
-                      Text(
-                        _produtoController.formatarPreco(
-                          _carrinhoController.totalGeral,
-                        ),
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton.icon(
-                    onPressed: () => _finalizarCompra(context),
-                    icon: const Icon(Icons.receipt_long),
-                    label: const Text('EMITIR NOTA FISCAL'),
-                  ),
-                ),
+                ],
               ],
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
-    ).then((_) => setState(() {}));
+    );
   }
 
   Future<void> _finalizarCompra(BuildContext modalContext) async {
+    final carrinhoController = Provider.of<CarrinhoController>(context, listen: false);
+    final produtoController = Provider.of<ProdutoController>(context, listen: false);
+    final usuarioController = Provider.of<UsuarioController>(context, listen: false);
+
     try {
-      final sucesso = await _carrinhoController.finalizarCompra();
+      // Atualizar estoque de cada produto
+      for (var item in carrinhoController.itens) {
+        await produtoController.atualizarEstoque(
+          item.produto.id!,
+          item.quantidade,
+        );
+      }
+
+      final notaFiscal = carrinhoController.gerarNotaFiscal(usuarioController.usuarioLogado!);
       
-      if (sucesso && mounted) {
-        final notaFiscal = _carrinhoController.gerarNotaFiscal(widget.usuario);
-        
-        Navigator.pop(modalContext);
-        
+      Navigator.pop(modalContext);
+      
+      if (mounted) {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -349,9 +384,8 @@ class _CompraViewState extends State<CompraView> {
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  _carrinhoController.limparCarrinho();
-                  setState(() {});
-                  _carregarProdutos();
+                  carrinhoController.limparCarrinho();
+                  produtoController.carregarProdutos();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Compra finalizada com sucesso!'),
@@ -369,7 +403,7 @@ class _CompraViewState extends State<CompraView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro ao finalizar compra: ${e.toString().replaceAll('Exception: ', '')}'),
+            content: Text('Erro ao finalizar compra: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -390,6 +424,8 @@ class _CompraViewState extends State<CompraView> {
           ),
           TextButton(
             onPressed: () {
+              Provider.of<UsuarioController>(context, listen: false).fazerLogout();
+              Provider.of<CarrinhoController>(context, listen: false).limparCarrinho();
               Navigator.pop(context);
               Navigator.pushReplacement(
                 context,
@@ -405,42 +441,56 @@ class _CompraViewState extends State<CompraView> {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = ResponsiveHelper.isTablet(context);
+    final gridColumns = ResponsiveHelper.getGridColumns(context);
+    final aspectRatio = ResponsiveHelper.getProductCardAspectRatio(context);
+    final usuario = Provider.of<UsuarioController>(context).usuarioLogado;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Loja'),
+        title: Text(
+          'Loja',
+          style: TextStyle(
+            fontSize: ResponsiveHelper.getFontSize(context, 20),
+          ),
+        ),
         automaticallyImplyLeading: false,
         actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.shopping_cart),
-                onPressed: _visualizarCarrinho,
-              ),
-              if (!_carrinhoController.carrinhoVazio)
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 16,
-                      minHeight: 16,
-                    ),
-                    child: Text(
-                      '${_carrinhoController.totalItens}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+          Consumer<CarrinhoController>(
+            builder: (context, controller, child) {
+              return Stack(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.shopping_cart),
+                    onPressed: _visualizarCarrinho,
                   ),
-                ),
-            ],
+                  if (!controller.carrinhoVazio)
+                    Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Text(
+                          '${controller.totalItens}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.logout),
@@ -452,27 +502,31 @@ class _CompraViewState extends State<CompraView> {
       body: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: ResponsiveHelper.getPadding(context),
             color: Colors.green.shade50,
             child: Row(
               children: [
-                const CircleAvatar(
-                  child: Icon(Icons.person),
+                CircleAvatar(
+                  radius: isTablet ? 28 : 24,
+                  child: const Icon(Icons.person),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: isTablet ? 16 : 12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.usuario.nome,
-                      style: const TextStyle(
+                      usuario?.nome ?? 'Cliente',
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: ResponsiveHelper.getFontSize(context, 16),
                       ),
                     ),
-                    const Text(
+                    Text(
                       'Cliente',
-                      style: TextStyle(color: Colors.grey),
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: ResponsiveHelper.getFontSize(context, 14),
+                      ),
                     ),
                   ],
                 ),
@@ -480,113 +534,126 @@ class _CompraViewState extends State<CompraView> {
             ),
           ),
           Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _produtos.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.inventory_2_outlined,
-                              size: 80,
-                              color: Colors.grey.shade400,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Nenhum produto disponível',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
-                          ],
+            child: Consumer<ProdutoController>(
+              builder: (context, controller, child) {
+                if (controller.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (controller.produtos.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.inventory_2_outlined,
+                          size: isTablet ? 100 : 80,
+                          color: Colors.grey.shade400,
                         ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: _carregarProdutos,
-                        child: GridView.builder(
-                          padding: const EdgeInsets.all(8),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.75,
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
+                        SizedBox(height: isTablet ? 20 : 16),
+                        Text(
+                          'Nenhum produto disponível',
+                          style: TextStyle(
+                            fontSize: ResponsiveHelper.getFontSize(context, 18),
+                            color: Colors.grey.shade600,
                           ),
-                          itemCount: _produtos.length,
-                          itemBuilder: (context, index) {
-                            final produto = _produtos[index];
-                            return Card(
-                              elevation: 3,
-                              child: InkWell(
-                                onTap: () => _mostrarDetalhesProduto(produto),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Center(
-                                          child: Icon(
-                                            Icons.shopping_bag,
-                                            size: 60,
-                                            color: Colors.blue.shade300,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        produto.nome,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
-                                        ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        _produtoController.formatarPreco(produto.preco),
-                                        style: const TextStyle(
-                                          color: Colors.green,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        'Estoque: ${produto.quantidadeEstoque}',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: produto.quantidadeEstoque > 0
-                                              ? Colors.grey.shade600
-                                              : Colors.red,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: ElevatedButton(
-                                          onPressed: produto.quantidadeEstoque > 0
-                                              ? () => _adicionarAoCarrinho(produto)
-                                              : null,
-                                          style: ElevatedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(vertical: 8),
-                                          ),
-                                          child: const Text(
-                                            'Adicionar',
-                                            style: TextStyle(fontSize: 12),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return RefreshIndicator(
+                  onRefresh: controller.carregarProdutos,
+                  child: GridView.builder(
+                    padding: ResponsiveHelper.getPadding(context),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: gridColumns,
+                      childAspectRatio: aspectRatio,
+                      crossAxisSpacing: isTablet ? 12 : 8,
+                      mainAxisSpacing: isTablet ? 12 : 8,
+                    ),
+                    itemCount: controller.produtos.length,
+                    itemBuilder: (context, index) {
+                      final produto = controller.produtos[index];
+                      return Card(
+                        elevation: 3,
+                        child: InkWell(
+                          onTap: () => _mostrarDetalhesProduto(produto),
+                          child: Padding(
+                            padding: EdgeInsets.all(isTablet ? 16 : 12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.shopping_bag,
+                                      size: isTablet ? 70 : 60,
+                                      color: Colors.blue.shade300,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
+                                SizedBox(height: isTablet ? 10 : 8),
+                                Text(
+                                  produto.nome,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: ResponsiveHelper.getFontSize(context, 14),
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(height: isTablet ? 6 : 4),
+                                Text(
+                                  controller.formatarPreco(produto.preco),
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: ResponsiveHelper.getFontSize(context, 16),
+                                  ),
+                                ),
+                                SizedBox(height: isTablet ? 6 : 4),
+                                Text(
+                                  'Estoque: ${produto.quantidadeEstoque}',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveHelper.getFontSize(context, 12),
+                                    color: produto.quantidadeEstoque > 0
+                                        ? Colors.grey.shade600
+                                        : Colors.red,
+                                  ),
+                                ),
+                                SizedBox(height: isTablet ? 10 : 8),
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: isTablet ? 40 : 36,
+                                  child: ElevatedButton(
+                                    onPressed: produto.quantidadeEstoque > 0
+                                        ? () => _adicionarAoCarrinho(produto)
+                                        : null,
+                                    style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: isTablet ? 10 : 8,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Adicionar',
+                                      style: TextStyle(
+                                        fontSize: ResponsiveHelper.getFontSize(context, 12),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
