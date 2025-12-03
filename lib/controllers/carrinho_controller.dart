@@ -87,9 +87,7 @@ class CarrinhoController extends ChangeNotifier {
     final buffer = StringBuffer();
     final dataHora = DateTime.now();
     
-    buffer.writeln('========================================');
-    buffer.writeln('           NOTA FISCAL');
-    buffer.writeln('========================================');
+    buffer.writeln('NOTA FISCAL');
     buffer.writeln('');
     buffer.writeln('Data: ${dataHora.day.toString().padLeft(2, '0')}/${dataHora.month.toString().padLeft(2, '0')}/${dataHora.year}');
     buffer.writeln('Hora: ${dataHora.hour.toString().padLeft(2, '0')}:${dataHora.minute.toString().padLeft(2, '0')}');
@@ -97,22 +95,18 @@ class CarrinhoController extends ChangeNotifier {
     buffer.writeln('Cliente: ${usuario.nome}');
     buffer.writeln('CPF: ${_formatarCpf(usuario.cpf)}');
     buffer.writeln('');
-    buffer.writeln('========================================');
-    buffer.writeln('           PRODUTOS');
-    buffer.writeln('========================================');
+    buffer.writeln('PRODUTOS');
     buffer.writeln('');
 
     for (var item in _carrinho.itens) {
       buffer.writeln('${item.produto.nome}');
-      buffer.writeln('  Qtd: ${item.quantidade} x ${_formatarPreco(item.produto.preco)}');
-      buffer.writeln('  Subtotal: ${_formatarPreco(item.subtotal)}');
+      buffer.writeln('Qtd: ${item.quantidade} x ${_formatarPreco(item.produto.preco)}');
+      buffer.writeln('Subtotal: ${_formatarPreco(item.subtotal)}');
       buffer.writeln('');
     }
 
-    buffer.writeln('========================================');
     buffer.writeln('Total de itens: ${_carrinho.totalItens}');
     buffer.writeln('TOTAL A PAGAR: ${_formatarPreco(_carrinho.totalGeral)}');
-    buffer.writeln('========================================');
     buffer.writeln('');
     buffer.writeln('Obrigado pela preferência!');
 
